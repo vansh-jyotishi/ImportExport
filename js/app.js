@@ -354,7 +354,7 @@
             });
         }
 
-        /* ---- Top Commodities ---- */
+        /* ---- Top Commodities (vertical bars, full width) ---- */
         const commodityCtx = document.getElementById('commodityChart');
         if (commodityCtx) {
             new Chart(commodityCtx, {
@@ -364,20 +364,28 @@
                     datasets: [{
                         label: 'Revenue ($M)',
                         data: [480, 350, 310, 280, 220, 190],
-                        backgroundColor: ['rgba(0,212,255,0.7)', 'rgba(77,139,255,0.7)', 'rgba(168,85,247,0.7)',
-                            'rgba(255,215,0,0.7)', 'rgba(0,245,212,0.7)', 'rgba(255,140,66,0.7)'],
-                        borderRadius: 6, borderSkipped: false,
+                        backgroundColor: [
+                            'rgba(0,212,255,0.75)', 'rgba(77,139,255,0.75)', 'rgba(168,85,247,0.75)',
+                            'rgba(255,215,0,0.75)', 'rgba(0,245,212,0.75)', 'rgba(255,140,66,0.75)'
+                        ],
+                        borderColor: [
+                            'rgba(0,212,255,1)', 'rgba(77,139,255,1)', 'rgba(168,85,247,1)',
+                            'rgba(255,215,0,1)', 'rgba(0,245,212,1)', 'rgba(255,140,66,1)'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        borderSkipped: false,
                     }]
                 },
                 options: {
-                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: {
                         legend: { display: false },
-                        tooltip: { ...tooltipStyle, callbacks: { label: ctx => ` $${ctx.parsed.x}M` } },
+                        tooltip: { ...tooltipStyle, callbacks: { label: ctx => ` $${ctx.parsed.y}M` } },
                     },
                     scales: {
-                        x: { ticks: { callback: v => '$' + v + 'M' } },
-                        y: { ticks: { font: { size: isMobile ? 9 : 12 } } }
+                        y: { ticks: { callback: v => '$' + v + 'M' } },
+                        x: { ticks: { font: { size: isMobile ? 9 : 12 }, maxRotation: isMobile ? 45 : 0 } }
                     }
                 }
             });
@@ -429,6 +437,28 @@
                 }
             });
         }
+    }
+
+    /* ================================================
+       3D TILT EFFECT ON CARDS (desktop only)
+       ================================================ */
+    if (!isMobile) {
+        const tiltCards = document.querySelectorAll('.goods-card, .carrier-card, .tracking-card');
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -4;
+                const rotateY = ((x - centerX) / centerX) * 4;
+                card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.01)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
     }
 
     /* ================================================
