@@ -529,11 +529,11 @@ section:not(#hero) {
 #carriers { background: linear-gradient(180deg, var(--bg-secondary), var(--bg-tertiary)); }
 #analytics { background: var(--bg-tertiary); }
 
-#shipScene {
-    background: #0b1222;
-    padding: 0;
-    position: relative;
-    min-height: 500px;
+#trusted {
+    background: var(--bg-secondary);
+    padding: 3.5rem 0;
+    border-top: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
 }
 
 /* Section decorations removed for clean professional look */
@@ -1343,78 +1343,7 @@ section:not(#hero) {
     justify-content: center;
 }
 
-/* ================================================
-   3D SHIP SCENE CONTAINER
-   ================================================ */
-.ship-scene-container {
-    width: 100%;
-    height: 500px;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    contain: layout style paint;
-    touch-action: pan-y;
-}
-
-.ship-scene-container canvas {
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
-}
-
-.ship-scene-overlay {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    min-height: 500px;
-    padding: 3rem 2rem;
-    pointer-events: none;
-    background: linear-gradient(0deg, rgba(11,18,34,0.9) 0%, rgba(11,18,34,0.25) 40%, transparent 70%);
-}
-
-.ship-scene-text {
-    text-align: center;
-    pointer-events: auto;
-    max-width: 600px;
-}
-
-.ship-scene-text h2 {
-    font-size: clamp(1.6rem, 3vw, 2.4rem);
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.02em;
-}
-
-.ship-scene-text p {
-    font-size: 1rem;
-    color: var(--text-secondary);
-}
-
-.ship-scene-fallback {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(ellipse at 50% 70%, rgba(0,100,180,0.08) 0%, transparent 60%);
-    color: var(--accent-cyan);
-}
-
-.ship-scene-fallback i {
-    font-size: 5rem;
-    margin-bottom: 1rem;
-    opacity: 0.25;
-}
-
-.ship-scene-fallback p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    font-weight: 500;
-}
+/* Ship scene removed */
 
 /* ================================================
    CUSTOM COMMODITY BARS
@@ -2065,9 +1994,8 @@ footer {
     .commodity-rank { display: none; }
     .commodity-trend { min-width: 42px; font-size: 0.65rem; }
 
-    #shipScene { min-height: 400px; }
-    .ship-scene-container { height: 400px; }
-    .ship-scene-overlay { min-height: 400px; }
+    .trusted-logos { gap: 2rem; }
+    .trusted-logo img { height: 24px; }
 
     /* ---- Footer ---- */
     .footer-grid {
@@ -2137,9 +2065,8 @@ footer {
 
     .chart-body { height: 200px; }
 
-    #shipScene { min-height: 320px; }
-    .ship-scene-container { height: 320px; }
-    .ship-scene-overlay { min-height: 320px; }
+    .trusted-logos { gap: 1.5rem; }
+    .trusted-logo img { height: 20px; max-width: 100px; }
     .chart-body-doughnut { height: 220px; }
 
     .modal {
