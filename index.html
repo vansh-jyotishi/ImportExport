@@ -839,6 +839,27 @@
         </div>
     </section>
 
+    <!-- 3D Cargo Ship Scene -->
+    <section id="shipScene">
+        <div class="section-decor">
+            <div class="decor-orb decor-orb-cyan" style="top:5%;right:8%"></div>
+            <div class="decor-ring" style="bottom:10%;left:4%"></div>
+        </div>
+        <div class="section-container">
+            <div class="section-header reveal">
+                <div class="section-badge"><i class="fas fa-ship"></i> Fleet Visualization</div>
+                <h2>Cargo in <span class="gradient-text">Motion</span></h2>
+                <p>Watch our container fleet navigate the world's shipping lanes in real time.</p>
+            </div>
+        </div>
+        <div class="ship-scene-container" id="shipSceneContainer">
+            <div class="ship-scene-fallback" id="shipSceneFallback">
+                <i class="fas fa-ship"></i>
+                <p>3D Ship Visualization</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer id="footer">
         <div class="section-decor">
@@ -921,6 +942,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
             onerror="document.getElementById('analytics').querySelectorAll('.chart-body').forEach(function(el){el.innerHTML='<p style=&quot;text-align:center;color:#5a6a80;padding:2rem&quot;>Charts unavailable offline</p>'})"></script>
     <script src="js/globe.js"></script>
+    <script src="js/ship.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
