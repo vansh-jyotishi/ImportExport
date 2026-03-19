@@ -114,6 +114,29 @@
         requestAnimationFrame(update);
     }
 
+    /* ================================================
+       COMMODITY BARS SCROLL ANIMATION
+       ================================================ */
+    const commodityBars = document.querySelectorAll('.commodity-bar');
+    if (commodityBars.length) {
+        const barObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.commodity-bar');
+                    bars.forEach((bar, i) => {
+                        const w = bar.dataset.width;
+                        bar.style.setProperty('--target-width', w);
+                        setTimeout(() => bar.classList.add('animated'), i * 120);
+                    });
+                    barObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        const barsContainer = document.querySelector('.commodity-bars');
+        if (barsContainer) barObserver.observe(barsContainer);
+    }
+
     const counterObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -354,42 +377,7 @@
             });
         }
 
-        /* ---- Top Commodities (vertical bars, full width) ---- */
-        const commodityCtx = document.getElementById('commodityChart');
-        if (commodityCtx) {
-            new Chart(commodityCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Electronics', 'Machinery', 'Automotive', 'Chemicals', 'Agriculture', 'Textiles'],
-                    datasets: [{
-                        label: 'Revenue ($M)',
-                        data: [480, 350, 310, 280, 220, 190],
-                        backgroundColor: [
-                            'rgba(0,212,255,0.75)', 'rgba(77,139,255,0.75)', 'rgba(168,85,247,0.75)',
-                            'rgba(255,215,0,0.75)', 'rgba(0,245,212,0.75)', 'rgba(255,140,66,0.75)'
-                        ],
-                        borderColor: [
-                            'rgba(0,212,255,1)', 'rgba(77,139,255,1)', 'rgba(168,85,247,1)',
-                            'rgba(255,215,0,1)', 'rgba(0,245,212,1)', 'rgba(255,140,66,1)'
-                        ],
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        borderSkipped: false,
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { ...tooltipStyle, callbacks: { label: ctx => ` $${ctx.parsed.y}M` } },
-                    },
-                    scales: {
-                        y: { ticks: { callback: v => '$' + v + 'M' } },
-                        x: { ticks: { font: { size: isMobile ? 9 : 12 }, maxRotation: isMobile ? 45 : 0 } }
-                    }
-                }
-            });
-        }
+        /* ---- Top Commodities: handled by custom HTML bars, not Chart.js ---- */
 
         /* ---- Trade Routes Performance ---- */
         const routesCtx = document.getElementById('routesChart');
