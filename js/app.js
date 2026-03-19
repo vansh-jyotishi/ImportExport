@@ -253,14 +253,14 @@
        ================================================ */
     const heroParticles = document.getElementById('heroParticles');
     if (heroParticles) {
-        const count = isMobile ? 8 : 25;
+        const count = isMobile ? 15 : 50;
         for (let i = 0; i < count; i++) {
             const p = document.createElement('div');
-            const size = Math.random() * 2.5 + 1;
+            const size = Math.random() * 3 + 1;
             p.style.cssText = `
                 position:absolute;
                 width:${size}px; height:${size}px;
-                background:rgba(43,143,190,${Math.random() * 0.15 + 0.05});
+                background:rgba(0,212,255,${Math.random() * 0.3 + 0.1});
                 border-radius:50%;
                 left:${Math.random() * 100}%; top:${Math.random() * 100}%;
                 animation:floatParticle ${Math.random() * 20 + 15}s linear infinite;
@@ -285,7 +285,7 @@
        ================================================ */
     if (typeof Chart === 'undefined') return;
 
-    Chart.defaults.color = '#6b7a8d';
+    Chart.defaults.color = '#5a6a80';
     Chart.defaults.font.family = "'Inter', sans-serif";
     Chart.defaults.font.size = isMobile ? 10 : 12;
     Chart.defaults.plugins.legend.labels.usePointStyle = true;
@@ -293,8 +293,8 @@
     Chart.defaults.scale.grid = { color: 'rgba(255,255,255,0.04)', drawBorder: false };
 
     const tooltipStyle = {
-        backgroundColor: 'rgba(16,27,46,0.95)',
-        borderColor: 'rgba(43,143,190,0.2)',
+        backgroundColor: 'rgba(10,22,40,0.95)',
+        borderColor: 'rgba(0,212,255,0.2)',
         borderWidth: 1,
         cornerRadius: 8,
         padding: 12,
@@ -314,8 +314,8 @@
         const shipmentCtx = document.getElementById('shipmentChart');
         if (shipmentCtx) {
             const grad = shipmentCtx.getContext('2d').createLinearGradient(0, 0, 0, 280);
-            grad.addColorStop(0, 'rgba(43,143,190,0.25)');
-            grad.addColorStop(1, 'rgba(43,143,190,0.0)');
+            grad.addColorStop(0, 'rgba(0,212,255,0.3)');
+            grad.addColorStop(1, 'rgba(0,212,255,0.0)');
 
             new Chart(shipmentCtx, {
                 type: 'line',
@@ -324,18 +324,18 @@
                     datasets: [{
                         label: '2026',
                         data: [4200, 4800, 5100, 4900, 5500, 5800, 6200, 5900, 6500, 6800, 7100, 7400],
-                        borderColor: '#2b8fbe',
+                        borderColor: '#00d4ff',
                         backgroundColor: grad,
                         fill: true, tension: 0.4,
-                        pointBackgroundColor: '#2b8fbe',
-                        pointBorderColor: '#0b1222',
+                        pointBackgroundColor: '#00d4ff',
+                        pointBorderColor: '#050a18',
                         pointBorderWidth: 2,
                         pointRadius: isMobile ? 2 : 4,
                         pointHoverRadius: 6,
                     }, {
                         label: '2025',
                         data: [3800, 4100, 4500, 4300, 4800, 5100, 5500, 5200, 5800, 6100, 6400, 6700],
-                        borderColor: 'rgba(61,111,181,0.3)',
+                        borderColor: 'rgba(77,139,255,0.4)',
                         backgroundColor: 'transparent',
                         borderDash: [5, 5], tension: 0.4, pointRadius: 0,
                     }]
@@ -363,8 +363,8 @@
                     labels: ['Asia-Pacific', 'Europe', 'N. America', 'Middle East', 'Africa', 'S. America'],
                     datasets: [{
                         data: [35, 25, 20, 10, 5, 5],
-                        backgroundColor: ['#2b8fbe', '#3d6fb5', '#6b7c99', '#c9a84c', '#c17a3e', '#3aa89a'],
-                        borderColor: '#101b2e', borderWidth: 3, hoverOffset: 8,
+                        backgroundColor: ['#00d4ff', '#4d8bff', '#a855f7', '#ffd700', '#ff8c42', '#00f5d4'],
+                        borderColor: '#0a1628', borderWidth: 3, hoverOffset: 8,
                     }]
                 },
                 options: {
@@ -393,12 +393,12 @@
                     datasets: [{
                         label: 'Shipments',
                         data: [1850, 1620, 1380, 1200, 1100, 980, 920, 780],
-                        backgroundColor: 'rgba(43,143,190,0.55)',
+                        backgroundColor: 'rgba(0,212,255,0.6)',
                         borderRadius: 6, borderSkipped: false,
                     }, {
                         label: 'On-Time %',
                         data: [98, 97, 99, 96, 98, 97, 95, 94],
-                        backgroundColor: 'rgba(58,168,154,0.55)',
+                        backgroundColor: 'rgba(0,245,212,0.6)',
                         borderRadius: 6, borderSkipped: false, yAxisID: 'y1',
                     }]
                 },
