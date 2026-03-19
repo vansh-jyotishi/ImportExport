@@ -3,9 +3,831 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>TradeFlow — Global Export Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    working on it
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <i class="fas fa-globe-americas"></i>
+                <span>TradeFlow</span>
+            </div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+            <p class="loader-text">Initializing global network...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fas fa-globe-americas"></i>
+                <span>TradeFlow</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#hero" class="active">Home</a></li>
+                <li><a href="#tracking">Tracking</a></li>
+                <li><a href="#goods">Goods</a></li>
+                <li><a href="#carriers">Carriers</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn-nav" id="trackBtn">
+                    <i class="fas fa-search"></i> Track Shipment
+                </button>
+                <button class="btn-nav btn-primary">
+                    <i class="fas fa-user"></i> Login
+                </button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section with 3D Globe -->
+    <section id="hero">
+        <div class="hero-bg-particles" id="heroParticles"></div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-bolt"></i> Real-Time Global Logistics
+                </div>
+                <h1 class="hero-title">
+                    Global Trade,<br>
+                    <span class="gradient-text">Reimagined.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Real-time visibility into worldwide shipments, carriers, and logistics
+                    — powered by cutting-edge technology and trusted by 2,000+ exporters.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-glow" onclick="document.getElementById('tracking').scrollIntoView({behavior:'smooth'})">
+                        <i class="fas fa-route"></i> Explore Routes
+                    </button>
+                    <button class="btn btn-outline" onclick="document.getElementById('analytics').scrollIntoView({behavior:'smooth'})">
+                        <i class="fas fa-chart-line"></i> View Analytics
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="stat-number" data-target="12500">0</span>
+                        <span class="stat-label">Active Shipments</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-number" data-target="185">0</span>
+                        <span class="stat-label">Countries</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-number" data-target="340">0</span>
+                        <span class="stat-label">Carriers</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-number" data-target="99">0</span>
+                        <span class="stat-suffix">%</span>
+                        <span class="stat-label">On-Time Rate</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-globe" id="globeContainer">
+                <!-- Fallback shown if WebGL/Three.js unavailable -->
+                <div class="globe-fallback" id="globeFallback">
+                    <i class="fas fa-globe-americas"></i>
+                    <p>Interactive Globe</p>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <span>Scroll to explore</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Live Tracking Section -->
+    <section id="tracking">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <div class="section-badge"><i class="fas fa-satellite-dish"></i> Live Tracking</div>
+                <h2>Real-Time Shipment <span class="gradient-text">Monitoring</span></h2>
+                <p>Track every shipment across the globe with precision updates and intelligent ETAs.</p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="tracking-search reveal">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Enter tracking ID (e.g., TF-2026-48291)" id="trackingInput">
+                    <button class="btn btn-glow btn-sm" id="searchTrackBtn">Track</button>
+                </div>
+            </div>
+
+            <!-- Active Shipments -->
+            <div class="tracking-grid">
+                <div class="tracking-card reveal" data-status="in-transit">
+                    <div class="tracking-card-header">
+                        <div class="tracking-id">
+                            <i class="fas fa-ship"></i>
+                            <span>TF-2026-48291</span>
+                        </div>
+                        <span class="status-badge status-transit">
+                            <span class="status-dot"></span> In Transit
+                        </span>
+                    </div>
+                    <div class="tracking-route">
+                        <div class="route-point">
+                            <span class="route-city">Shanghai</span>
+                            <span class="route-country">China</span>
+                        </div>
+                        <div class="route-line">
+                            <div class="route-progress" style="width: 65%"></div>
+                            <div class="route-ship"><i class="fas fa-ship"></i></div>
+                        </div>
+                        <div class="route-point">
+                            <span class="route-city">Rotterdam</span>
+                            <span class="route-country">Netherlands</span>
+                        </div>
+                    </div>
+                    <div class="tracking-details">
+                        <div class="detail"><i class="fas fa-box"></i> 240 TEU Containers</div>
+                        <div class="detail"><i class="fas fa-clock"></i> ETA: Mar 28, 2026</div>
+                        <div class="detail"><i class="fas fa-weight-hanging"></i> 4,800 Tonnes</div>
+                    </div>
+                    <div class="tracking-timeline">
+                        <div class="timeline-step completed">
+                            <div class="timeline-dot"></div>
+                            <span>Departed Shanghai</span>
+                            <small>Mar 15</small>
+                        </div>
+                        <div class="timeline-step completed">
+                            <div class="timeline-dot"></div>
+                            <span>Passed Singapore</span>
+                            <small>Mar 18</small>
+                        </div>
+                        <div class="timeline-step active">
+                            <div class="timeline-dot"></div>
+                            <span>Indian Ocean</span>
+                            <small>Mar 19</small>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-dot"></div>
+                            <span>Suez Canal</span>
+                            <small>Mar 23</small>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-dot"></div>
+                            <span>Arrive Rotterdam</span>
+                            <small>Mar 28</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tracking-card reveal" data-status="in-transit">
+                    <div class="tracking-card-header">
+                        <div class="tracking-id">
+                            <i class="fas fa-plane"></i>
+                            <span>TF-2026-77104</span>
+                        </div>
+                        <span class="status-badge status-transit">
+                            <span class="status-dot"></span> In Transit
+                        </span>
+                    </div>
+                    <div class="tracking-route">
+                        <div class="route-point">
+                            <span class="route-city">Dubai</span>
+                            <span class="route-country">UAE</span>
+                        </div>
+                        <div class="route-line air">
+                            <div class="route-progress" style="width: 40%"></div>
+                            <div class="route-ship"><i class="fas fa-plane"></i></div>
+                        </div>
+                        <div class="route-point">
+                            <span class="route-city">New York</span>
+                            <span class="route-country">United States</span>
+                        </div>
+                    </div>
+                    <div class="tracking-details">
+                        <div class="detail"><i class="fas fa-box"></i> 12 Pallets</div>
+                        <div class="detail"><i class="fas fa-clock"></i> ETA: Mar 20, 2026</div>
+                        <div class="detail"><i class="fas fa-weight-hanging"></i> 18 Tonnes</div>
+                    </div>
+                    <div class="tracking-timeline">
+                        <div class="timeline-step completed">
+                            <div class="timeline-dot"></div>
+                            <span>Cleared Dubai Customs</span>
+                            <small>Mar 18</small>
+                        </div>
+                        <div class="timeline-step active">
+                            <div class="timeline-dot"></div>
+                            <span>In Flight</span>
+                            <small>Mar 19</small>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-dot"></div>
+                            <span>JFK Arrival</span>
+                            <small>Mar 20</small>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-dot"></div>
+                            <span>Customs Clearance</span>
+                            <small>Mar 20</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tracking-card reveal" data-status="delivered">
+                    <div class="tracking-card-header">
+                        <div class="tracking-id">
+                            <i class="fas fa-truck"></i>
+                            <span>TF-2026-33059</span>
+                        </div>
+                        <span class="status-badge status-delivered">
+                            <span class="status-dot"></span> Delivered
+                        </span>
+                    </div>
+                    <div class="tracking-route">
+                        <div class="route-point">
+                            <span class="route-city">Mumbai</span>
+                            <span class="route-country">India</span>
+                        </div>
+                        <div class="route-line delivered">
+                            <div class="route-progress" style="width: 100%"></div>
+                        </div>
+                        <div class="route-point">
+                            <span class="route-city">Hamburg</span>
+                            <span class="route-country">Germany</span>
+                        </div>
+                    </div>
+                    <div class="tracking-details">
+                        <div class="detail"><i class="fas fa-box"></i> 80 TEU Containers</div>
+                        <div class="detail"><i class="fas fa-check-circle"></i> Delivered Mar 17</div>
+                        <div class="detail"><i class="fas fa-weight-hanging"></i> 1,600 Tonnes</div>
+                    </div>
+                    <div class="tracking-timeline">
+                        <div class="timeline-step completed">
+                            <div class="timeline-dot"></div>
+                            <span>Departed Mumbai</span>
+                            <small>Mar 2</small>
+                        </div>
+                        <div class="timeline-step completed">
+                            <div class="timeline-dot"></div>
+                            <span>Suez Canal Transit</span>
+                            <small>Mar 10</small>
+                        </div>
+                        <div class="timeline-step completed">
+                            <div class="timeline-dot"></div>
+                            <span>Mediterranean Sea</span>
+                            <small>Mar 13</small>
+                        </div>
+                        <div class="timeline-step completed">
+                            <div class="timeline-dot"></div>
+                            <span>Delivered Hamburg</span>
+                            <small>Mar 17</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Goods Catalog -->
+    <section id="goods">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <div class="section-badge"><i class="fas fa-cubes"></i> Product Catalog</div>
+                <h2>Export <span class="gradient-text">Goods & Commodities</span></h2>
+                <p>Browse our extensive catalog of globally traded goods across multiple industries.</p>
+            </div>
+
+            <div class="goods-filters reveal">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="electronics">Electronics</button>
+                <button class="filter-btn" data-filter="machinery">Machinery</button>
+                <button class="filter-btn" data-filter="agriculture">Agriculture</button>
+                <button class="filter-btn" data-filter="textiles">Textiles</button>
+                <button class="filter-btn" data-filter="chemicals">Chemicals</button>
+                <button class="filter-btn" data-filter="automotive">Automotive</button>
+            </div>
+
+            <div class="goods-grid">
+                <div class="goods-card reveal" data-category="electronics">
+                    <div class="goods-icon"><i class="fas fa-microchip"></i></div>
+                    <div class="goods-info">
+                        <h3>Semiconductors</h3>
+                        <span class="goods-category">Electronics</span>
+                        <p>High-performance chips and integrated circuits for consumer and industrial applications.</p>
+                        <div class="goods-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Taiwan, S. Korea</span>
+                            <span><i class="fas fa-dollar-sign"></i> $2.4M avg/shipment</span>
+                        </div>
+                        <div class="goods-tags">
+                            <span class="tag">High-Value</span>
+                            <span class="tag">Temperature-Controlled</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="goods-card reveal" data-category="machinery">
+                    <div class="goods-icon"><i class="fas fa-cogs"></i></div>
+                    <div class="goods-info">
+                        <h3>Industrial Machinery</h3>
+                        <span class="goods-category">Machinery</span>
+                        <p>CNC machines, turbines, and heavy manufacturing equipment for global factories.</p>
+                        <div class="goods-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Germany, Japan</span>
+                            <span><i class="fas fa-dollar-sign"></i> $890K avg/shipment</span>
+                        </div>
+                        <div class="goods-tags">
+                            <span class="tag">Oversized</span>
+                            <span class="tag">Fragile</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="goods-card reveal" data-category="agriculture">
+                    <div class="goods-icon"><i class="fas fa-wheat-awn"></i></div>
+                    <div class="goods-info">
+                        <h3>Grain & Cereals</h3>
+                        <span class="goods-category">Agriculture</span>
+                        <p>Wheat, rice, corn, and specialty grains sourced from major agricultural regions.</p>
+                        <div class="goods-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> USA, Brazil, India</span>
+                            <span><i class="fas fa-dollar-sign"></i> $320K avg/shipment</span>
+                        </div>
+                        <div class="goods-tags">
+                            <span class="tag">Bulk</span>
+                            <span class="tag">Climate-Sensitive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="goods-card reveal" data-category="textiles">
+                    <div class="goods-icon"><i class="fas fa-shirt"></i></div>
+                    <div class="goods-info">
+                        <h3>Textiles & Apparel</h3>
+                        <span class="goods-category">Textiles</span>
+                        <p>Fabrics, garments, and fashion goods from leading textile manufacturing hubs.</p>
+                        <div class="goods-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Bangladesh, Vietnam</span>
+                            <span><i class="fas fa-dollar-sign"></i> $150K avg/shipment</span>
+                        </div>
+                        <div class="goods-tags">
+                            <span class="tag">High-Volume</span>
+                            <span class="tag">Standard</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="goods-card reveal" data-category="chemicals">
+                    <div class="goods-icon"><i class="fas fa-flask"></i></div>
+                    <div class="goods-info">
+                        <h3>Specialty Chemicals</h3>
+                        <span class="goods-category">Chemicals</span>
+                        <p>Industrial chemicals, polymers, and pharmaceutical intermediates with certified handling.</p>
+                        <div class="goods-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Germany, China</span>
+                            <span><i class="fas fa-dollar-sign"></i> $540K avg/shipment</span>
+                        </div>
+                        <div class="goods-tags">
+                            <span class="tag">Hazmat</span>
+                            <span class="tag">Certified</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="goods-card reveal" data-category="automotive">
+                    <div class="goods-icon"><i class="fas fa-car"></i></div>
+                    <div class="goods-info">
+                        <h3>Automotive Parts</h3>
+                        <span class="goods-category">Automotive</span>
+                        <p>OEM and aftermarket components, EV batteries, and precision-engineered parts.</p>
+                        <div class="goods-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Japan, Germany, USA</span>
+                            <span><i class="fas fa-dollar-sign"></i> $670K avg/shipment</span>
+                        </div>
+                        <div class="goods-tags">
+                            <span class="tag">Just-In-Time</span>
+                            <span class="tag">Tracked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="goods-card reveal" data-category="electronics">
+                    <div class="goods-icon"><i class="fas fa-solar-panel"></i></div>
+                    <div class="goods-info">
+                        <h3>Solar Panels</h3>
+                        <span class="goods-category">Electronics</span>
+                        <p>Photovoltaic modules and renewable energy components for global energy projects.</p>
+                        <div class="goods-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> China, Malaysia</span>
+                            <span><i class="fas fa-dollar-sign"></i> $1.1M avg/shipment</span>
+                        </div>
+                        <div class="goods-tags">
+                            <span class="tag">Fragile</span>
+                            <span class="tag">Oversized</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="goods-card reveal" data-category="agriculture">
+                    <div class="goods-icon"><i class="fas fa-mug-hot"></i></div>
+                    <div class="goods-info">
+                        <h3>Coffee & Spices</h3>
+                        <span class="goods-category">Agriculture</span>
+                        <p>Premium coffee beans, exotic spices, and organic produce from tropical regions.</p>
+                        <div class="goods-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Colombia, India</span>
+                            <span><i class="fas fa-dollar-sign"></i> $95K avg/shipment</span>
+                        </div>
+                        <div class="goods-tags">
+                            <span class="tag">Temperature-Controlled</span>
+                            <span class="tag">Organic</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Carriers Section -->
+    <section id="carriers">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <div class="section-badge"><i class="fas fa-anchor"></i> Our Fleet</div>
+                <h2>Trusted <span class="gradient-text">Carrier Network</span></h2>
+                <p>Partner with world-class carriers across maritime, air, and land transport.</p>
+            </div>
+
+            <div class="carrier-types reveal">
+                <div class="carrier-type active" data-type="all">
+                    <i class="fas fa-globe"></i> All
+                </div>
+                <div class="carrier-type" data-type="maritime">
+                    <i class="fas fa-ship"></i> Maritime
+                </div>
+                <div class="carrier-type" data-type="air">
+                    <i class="fas fa-plane"></i> Air Freight
+                </div>
+                <div class="carrier-type" data-type="land">
+                    <i class="fas fa-truck"></i> Land
+                </div>
+            </div>
+
+            <div class="carriers-grid">
+                <div class="carrier-card reveal" data-type="maritime">
+                    <div class="carrier-card-top">
+                        <div class="carrier-icon maritime"><i class="fas fa-ship"></i></div>
+                        <div class="carrier-rating">
+                            <i class="fas fa-star"></i> 4.9
+                        </div>
+                    </div>
+                    <h3>OceanLink Shipping</h3>
+                    <span class="carrier-badge maritime">Maritime</span>
+                    <div class="carrier-stats">
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">450+</span>
+                            <span class="carrier-stat-label">Vessels</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">120</span>
+                            <span class="carrier-stat-label">Routes</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">98%</span>
+                            <span class="carrier-stat-label">On-Time</span>
+                        </div>
+                    </div>
+                    <div class="carrier-routes">
+                        <span>Asia-Europe</span><span>Transpacific</span><span>Middle East</span>
+                    </div>
+                </div>
+
+                <div class="carrier-card reveal" data-type="air">
+                    <div class="carrier-card-top">
+                        <div class="carrier-icon air"><i class="fas fa-plane"></i></div>
+                        <div class="carrier-rating">
+                            <i class="fas fa-star"></i> 4.8
+                        </div>
+                    </div>
+                    <h3>AeroGlobal Freight</h3>
+                    <span class="carrier-badge air">Air Freight</span>
+                    <div class="carrier-stats">
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">85</span>
+                            <span class="carrier-stat-label">Aircraft</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">200+</span>
+                            <span class="carrier-stat-label">Destinations</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">99%</span>
+                            <span class="carrier-stat-label">On-Time</span>
+                        </div>
+                    </div>
+                    <div class="carrier-routes">
+                        <span>Express</span><span>Global</span><span>Perishables</span>
+                    </div>
+                </div>
+
+                <div class="carrier-card reveal" data-type="land">
+                    <div class="carrier-card-top">
+                        <div class="carrier-icon land"><i class="fas fa-truck"></i></div>
+                        <div class="carrier-rating">
+                            <i class="fas fa-star"></i> 4.7
+                        </div>
+                    </div>
+                    <h3>TransContinental Logistics</h3>
+                    <span class="carrier-badge land">Land Transport</span>
+                    <div class="carrier-stats">
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">3,200</span>
+                            <span class="carrier-stat-label">Trucks</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">45</span>
+                            <span class="carrier-stat-label">Countries</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">97%</span>
+                            <span class="carrier-stat-label">On-Time</span>
+                        </div>
+                    </div>
+                    <div class="carrier-routes">
+                        <span>Europe</span><span>Cross-Border</span><span>Last-Mile</span>
+                    </div>
+                </div>
+
+                <div class="carrier-card reveal" data-type="maritime">
+                    <div class="carrier-card-top">
+                        <div class="carrier-icon maritime"><i class="fas fa-anchor"></i></div>
+                        <div class="carrier-rating">
+                            <i class="fas fa-star"></i> 4.8
+                        </div>
+                    </div>
+                    <h3>PacificWave Maritime</h3>
+                    <span class="carrier-badge maritime">Maritime</span>
+                    <div class="carrier-stats">
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">280</span>
+                            <span class="carrier-stat-label">Vessels</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">90</span>
+                            <span class="carrier-stat-label">Ports</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">96%</span>
+                            <span class="carrier-stat-label">On-Time</span>
+                        </div>
+                    </div>
+                    <div class="carrier-routes">
+                        <span>Transpacific</span><span>South America</span><span>Oceania</span>
+                    </div>
+                </div>
+
+                <div class="carrier-card reveal" data-type="air">
+                    <div class="carrier-card-top">
+                        <div class="carrier-icon air"><i class="fas fa-jet-fighter"></i></div>
+                        <div class="carrier-rating">
+                            <i class="fas fa-star"></i> 4.9
+                        </div>
+                    </div>
+                    <h3>EuroConnect Air</h3>
+                    <span class="carrier-badge air">Air Freight</span>
+                    <div class="carrier-stats">
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">60</span>
+                            <span class="carrier-stat-label">Aircraft</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">150</span>
+                            <span class="carrier-stat-label">Destinations</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">99%</span>
+                            <span class="carrier-stat-label">On-Time</span>
+                        </div>
+                    </div>
+                    <div class="carrier-routes">
+                        <span>Europe-Asia</span><span>Priority</span><span>Pharma</span>
+                    </div>
+                </div>
+
+                <div class="carrier-card reveal" data-type="land">
+                    <div class="carrier-card-top">
+                        <div class="carrier-icon land"><i class="fas fa-train"></i></div>
+                        <div class="carrier-rating">
+                            <i class="fas fa-star"></i> 4.6
+                        </div>
+                    </div>
+                    <h3>AsiaExpress Rail</h3>
+                    <span class="carrier-badge land">Rail & Land</span>
+                    <div class="carrier-stats">
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">800</span>
+                            <span class="carrier-stat-label">Rail Cars</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">25</span>
+                            <span class="carrier-stat-label">Countries</span>
+                        </div>
+                        <div class="carrier-stat">
+                            <span class="carrier-stat-value">95%</span>
+                            <span class="carrier-stat-label">On-Time</span>
+                        </div>
+                    </div>
+                    <div class="carrier-routes">
+                        <span>Silk Road</span><span>China-Europe</span><span>Intermodal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analytics Dashboard -->
+    <section id="analytics">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <div class="section-badge"><i class="fas fa-chart-pie"></i> Analytics</div>
+                <h2>Logistics <span class="gradient-text">Intelligence</span></h2>
+                <p>Comprehensive data insights to optimize your global supply chain.</p>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid reveal">
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-box-open"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-value" data-target="48291">0</span>
+                        <span class="kpi-label">Total Shipments (YTD)</span>
+                    </div>
+                    <div class="kpi-trend up">
+                        <i class="fas fa-arrow-up"></i> 12.5%
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-value kpi-prefix" data-target="2840" data-prefix="$" data-suffix="M">$0M</span>
+                        <span class="kpi-label">Revenue (YTD)</span>
+                    </div>
+                    <div class="kpi-trend up">
+                        <i class="fas fa-arrow-up"></i> 8.3%
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-clock"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-value" data-target="14" data-suffix=" days">0</span>
+                        <span class="kpi-label">Avg. Transit Time</span>
+                    </div>
+                    <div class="kpi-trend down">
+                        <i class="fas fa-arrow-down"></i> 2.1 days
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-shield-halved"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-value" data-target="99" data-suffix=".7%">0</span>
+                        <span class="kpi-label">Delivery Success</span>
+                    </div>
+                    <div class="kpi-trend up">
+                        <i class="fas fa-arrow-up"></i> 0.3%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-card chart-wide reveal">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-area"></i> Monthly Shipment Volume</h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn active">2026</button>
+                            <button class="chart-btn">2025</button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="shipmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card reveal">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Revenue by Region</h3>
+                    </div>
+                    <div class="chart-body chart-body-doughnut">
+                        <canvas id="regionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card reveal">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-ranking-star"></i> Top Commodities</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="commodityChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card chart-wide reveal">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-route"></i> Top Trade Routes Performance</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="routesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-wave">
+            <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+                <path d="M0,40 C360,100 720,0 1080,50 C1260,75 1380,40 1440,40 L1440,100 L0,100 Z" fill="rgba(5,10,24,1)"/>
+            </svg>
+        </div>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-globe-americas"></i>
+                        <span>TradeFlow</span>
+                    </div>
+                    <p>Powering global trade with real-time visibility, trusted carriers, and intelligent logistics.</p>
+                    <div class="footer-socials">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Platform</h4>
+                    <a href="#">Shipment Tracking</a>
+                    <a href="#">Route Explorer</a>
+                    <a href="#">Carrier Network</a>
+                    <a href="#">Analytics Suite</a>
+                    <a href="#">API Access</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <a href="#">About Us</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Press</a>
+                    <a href="#">Partners</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <a href="#">Documentation</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Case Studies</a>
+                    <a href="#">Help Center</a>
+                    <a href="#">Status Page</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TradeFlow. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Settings</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Track Shipment Modal -->
+    <div class="modal-overlay" id="trackModal">
+        <div class="modal">
+            <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+            <h2><i class="fas fa-search"></i> Track Your Shipment</h2>
+            <p>Enter your tracking ID to get real-time updates on your shipment.</p>
+            <div class="modal-search">
+                <input type="text" placeholder="e.g., TF-2026-48291" id="modalTrackInput">
+                <button class="btn btn-glow" id="modalSearchBtn">Track</button>
+            </div>
+            <div class="modal-result" id="modalResult"></div>
+        </div>
+    </div>
+
+    <!-- Scripts with CDN fallback handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
+            onerror="console.warn('Three.js CDN failed — globe will show fallback.')"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+            onerror="document.getElementById('analytics').querySelectorAll('.chart-body').forEach(function(el){el.innerHTML='<p style=&quot;text-align:center;color:#5a6a80;padding:2rem&quot;>Charts unavailable offline</p>'})"></script>
+    <script src="js/globe.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
