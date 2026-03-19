@@ -467,15 +467,14 @@ body.no-scroll {
     align-items: center;
     justify-content: center;
     background: radial-gradient(circle, rgba(0, 212, 255, 0.08) 0%, transparent 70%);
-    border-radius: 50%;
     color: var(--accent-cyan);
 }
 
 .globe-fallback i {
-    font-size: 6rem;
+    font-size: 8rem;
     margin-bottom: 1rem;
-    opacity: 0.6;
-    animation: spin 20s linear infinite;
+    opacity: 0.4;
+    animation: spin 30s linear infinite;
 }
 
 .globe-fallback p {
@@ -1539,27 +1538,38 @@ footer {
    RESPONSIVE — 1024px (Tablet landscape)
    ================================================ */
 @media (max-width: 1024px) {
+    /* Hero — globe becomes full background behind content */
     .hero-container {
         grid-template-columns: 1fr;
         text-align: center;
+        position: relative;
     }
 
     .hero-content {
         padding-top: 7rem;
-        order: 1;
+        padding-bottom: 4rem;
+        position: relative;
+        z-index: 3;
     }
 
     .hero-subtitle { margin-left: auto; margin-right: auto; }
     .hero-buttons { justify-content: center; }
 
     .hero-globe {
-        order: 2;
-        height: min(400px, 50vw);
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        opacity: 0.3;
+        pointer-events: none;
     }
 
     .hero-stats {
         grid-template-columns: repeat(2, 1fr);
         justify-items: center;
+        position: relative;
+        z-index: 3;
     }
 
     .hero-stat { text-align: center; }
@@ -1634,7 +1644,7 @@ footer {
     .hero-title { font-size: 2rem; }
 
     .hero-globe {
-        height: min(300px, 70vw);
+        opacity: 0.2;
     }
 
     .hero-scroll-indicator { display: none; }
@@ -1756,7 +1766,7 @@ footer {
     }
 
     .hero-globe {
-        height: min(260px, 70vw);
+        opacity: 0.15;
     }
 
     .hero-stats {

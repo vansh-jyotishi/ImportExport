@@ -50,9 +50,13 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
 
+    function isBackgroundMode() {
+        return window.innerWidth <= 1024;
+    }
+
     function getCameraZ() {
+        if (isBackgroundMode()) return 12;
         const w = container.clientWidth;
-        if (w < 400) return 20;
         if (w < 600) return 18;
         if (w < 900) return 16;
         return 14;
