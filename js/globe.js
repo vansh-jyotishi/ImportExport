@@ -184,78 +184,103 @@
     }
 
     /* ================================================
-       GLOBE TEXTURE — light land, dark ocean, smooth
+       GLOBE TEXTURE — smooth land via low-res + blur + upscale
+       Renders land at small resolution, blurs heavily, then
+       upscales with bilinear interpolation for smooth coastlines.
        ================================================ */
     function createGlobeTexture() {
         const W = TEX_SIZE, H = TEX_SIZE / 2;
-        const canvas = document.createElement('canvas');
-        canvas.width = W; canvas.height = H;
-        const ctx = canvas.getContext('2d');
 
-        /* Deep ocean base */
-        const oceanGrad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.7);
-        oceanGrad.addColorStop(0, '#0a1a2e');
-        oceanGrad.addColorStop(1, '#060e1c');
-        ctx.fillStyle = oceanGrad;
-        ctx.fillRect(0, 0, W, H);
+        /* --- Step 1: Paint land on small work canvas --- */
+        const sW = 720, sH = 360;
+        const work = document.createElement('canvas');
+        work.width = sW; work.height = sH;
+        const wCtx = work.getContext('2d');
 
-        /* Paint land using ImageData for smooth per-pixel control */
-        const imgData = ctx.getImageData(0, 0, W, H);
+        /* Black background (transparent ocean) */
+        wCtx.clearRect(0, 0, sW, sH);
+
+        const imgData = wCtx.createImageData(sW, sH);
         const d = imgData.data;
-
-        for (let py = 0; py < H; py++) {
-            const lat = 90 - (py / H) * 180;
-            for (let px = 0; px < W; px++) {
-                const lng = (px / W) * 360 - 180;
+        for (let py = 0; py < sH; py++) {
+            const lat = 90 - (py / sH) * 180;
+            for (let px = 0; px < sW; px++) {
+                const lng = (px / sW) * 360 - 180;
                 if (isLand(lat, lng)) {
-                    const idx = (py * W + px) * 4;
-                    /* Natural earth green-teal land */
-                    d[idx]     = 30 + Math.random() * 12;  /* R */
-                    d[idx + 1] = 85 + Math.random() * 20;  /* G */
-                    d[idx + 2] = 65 + Math.random() * 15;  /* B */
+                    const idx = (py * sW + px) * 4;
+                    d[idx]     = 38 + ((px * 7 + py * 13) % 15);
+                    d[idx + 1] = 110 + ((px * 11 + py * 3) % 25);
+                    d[idx + 2] = 85 + ((px * 5 + py * 9) % 18);
                     d[idx + 3] = 255;
                 }
             }
         }
-        ctx.putImageData(imgData, 0, 0);
+        wCtx.putImageData(imgData, 0, 0);
 
-        /* Smooth with blur to eliminate blocky edges */
-        const smoothCanvas = document.createElement('canvas');
-        smoothCanvas.width = W; smoothCanvas.height = H;
-        const sCtx = smoothCanvas.getContext('2d');
-        sCtx.filter = 'blur(2.5px)';
-        sCtx.drawImage(canvas, 0, 0);
-        sCtx.filter = 'none';
+        /* --- Step 2: Heavy blur on small canvas (smooths all edges) --- */
+        const blurred = document.createElement('canvas');
+        blurred.width = sW; blurred.height = sH;
+        const bCtx = blurred.getContext('2d');
+        bCtx.filter = 'blur(4px)';
+        bCtx.drawImage(work, 0, 0);
 
-        /* Overlay coastline glow — draw land edges slightly brighter */
-        const edgeCanvas = document.createElement('canvas');
-        edgeCanvas.width = W; edgeCanvas.height = H;
-        const eCtx = edgeCanvas.getContext('2d');
-        eCtx.fillStyle = 'rgba(0, 210, 255, 0.35)';
-        const step = 1;
-        for (let lat = -89; lat <= 89; lat += step) {
-            for (let lng = -179; lng < 180; lng += step) {
+        /* --- Step 3: Coastline glow on small canvas --- */
+        const edge = document.createElement('canvas');
+        edge.width = sW; edge.height = sH;
+        const eCtx = edge.getContext('2d');
+        eCtx.fillStyle = 'rgba(0, 210, 255, 0.5)';
+        for (let py = 1; py < sH - 1; py++) {
+            const lat = 90 - (py / sH) * 180;
+            for (let px = 1; px < sW - 1; px++) {
+                const lng = (px / sW) * 360 - 180;
                 if (isLand(lat, lng)) {
-                    if (!isLand(lat + 1, lng) || !isLand(lat - 1, lng) ||
-                        !isLand(lat, lng + 1) || !isLand(lat, lng - 1)) {
-                        const x = ((lng + 180) / 360) * W;
-                        const y = ((90 - lat) / 180) * H;
-                        eCtx.fillRect(x - 0.5, y - 0.5, W / 360 + 1, H / 180 + 1);
+                    const latStep = 180 / sH, lngStep = 360 / sW;
+                    if (!isLand(lat + latStep, lng) || !isLand(lat - latStep, lng) ||
+                        !isLand(lat, lng + lngStep) || !isLand(lat, lng - lngStep)) {
+                        eCtx.fillRect(px, py, 1, 1);
                     }
                 }
             }
         }
-        eCtx.filter = 'blur(1.5px)';
         const edgeBlur = document.createElement('canvas');
-        edgeBlur.width = W; edgeBlur.height = H;
+        edgeBlur.width = sW; edgeBlur.height = sH;
         const ebCtx = edgeBlur.getContext('2d');
-        ebCtx.filter = 'blur(1.5px)';
-        ebCtx.drawImage(edgeCanvas, 0, 0);
+        ebCtx.filter = 'blur(3px)';
+        ebCtx.drawImage(edge, 0, 0);
 
-        /* Composite: blurred land + edge glow */
-        sCtx.drawImage(edgeBlur, 0, 0);
+        /* --- Step 4: Composite onto final high-res canvas --- */
+        const canvas = document.createElement('canvas');
+        canvas.width = W; canvas.height = H;
+        const ctx = canvas.getContext('2d');
 
-        const texture = new THREE.CanvasTexture(smoothCanvas);
+        /* Ocean */
+        const oceanGrad = ctx.createRadialGradient(W * 0.4, H * 0.4, 0, W / 2, H / 2, W * 0.7);
+        oceanGrad.addColorStop(0, '#0c1e30');
+        oceanGrad.addColorStop(1, '#060e1c');
+        ctx.fillStyle = oceanGrad;
+        ctx.fillRect(0, 0, W, H);
+
+        /* Upscale blurred land — browser bilinear interpolation adds extra smoothing */
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(blurred, 0, 0, W, H);
+
+        /* Upscale edge glow */
+        ctx.drawImage(edgeBlur, 0, 0, W, H);
+
+        /* Subtle grid lines */
+        ctx.strokeStyle = 'rgba(80, 160, 220, 0.018)';
+        ctx.lineWidth = 0.8;
+        for (let lat = -80; lat <= 80; lat += 30) {
+            const y = ((90 - lat) / 180) * H;
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
+        for (let lng = -180; lng < 180; lng += 30) {
+            const x = ((lng + 180) / 360) * W;
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        }
+
+        const texture = new THREE.CanvasTexture(canvas);
         texture.needsUpdate = true;
         return texture;
     }
