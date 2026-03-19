@@ -30,8 +30,8 @@
 
     /* ---- Scene ---- */
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x030a15, 0.012);
-    scene.background = new THREE.Color(0x030a15);
+    scene.fog = new THREE.FogExp2(0x0b1222, 0.012);
+    scene.background = new THREE.Color(0x0b1222);
 
     /* ---- Camera — cinematic 3/4 angle ---- */
     const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 600);
@@ -69,7 +69,7 @@
     scene.add(new THREE.HemisphereLight(0x3366aa, 0x0a0e1a, 0.6));
 
     if (DETAIL >= 1) {
-        const rimLight = new THREE.PointLight(0x00aaff, 0.6, 40);
+        const rimLight = new THREE.PointLight(0x2b7099, 0.6, 40);
         rimLight.position.set(-10, 6, -8);
         scene.add(rimLight);
     }
@@ -262,10 +262,10 @@
        CONTAINERS — stacked in bays
        ================================================ */
     const colors = [
-        0x00bbee, 0x0088dd, 0x00ddaa, 0xaa55ff,
-        0xffcc00, 0xff7733, 0xee3344, 0x22cc66,
-        0x3366ff, 0xdd2288, 0xff8800, 0x44aaff,
-        0x667788, 0xbbccdd, 0x889900, 0xcc6633,
+        0x2b6b8f, 0x1e5573, 0x3a7a6a, 0x8b4444,
+        0x4a6a85, 0xb8942e, 0x6b3333, 0x3a6b5a,
+        0x2e4f7a, 0x785040, 0x5a7a5a, 0x3a5a7a,
+        0x5a6a78, 0x8a9aaa, 0x6a7a3a, 0x7a5a3a,
     ];
 
     const cW = 1.55, cH = 1.0, cD = 0.88;

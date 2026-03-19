@@ -159,7 +159,7 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, TEX_W, TEX_H);
 
-        ctx.strokeStyle = 'rgba(0, 180, 255, 0.04)';
+        ctx.strokeStyle = 'rgba(43, 143, 190, 0.03)';
         ctx.lineWidth = 1;
         for (let lat = -80; lat <= 80; lat += 10) {
             const y = ((90 - lat) / 180) * TEX_H;
@@ -178,7 +178,7 @@
                     const y = ((90 - lat) / 180) * TEX_H;
                     ctx.beginPath();
                     ctx.arc(x, y, dotR, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(0, 200, 255, 0.45)';
+                    ctx.fillStyle = 'rgba(43, 143, 190, 0.40)';
                     ctx.fill();
                 }
             }
@@ -211,7 +211,7 @@
                 varying vec3 vNormal;
                 void main() {
                     float intensity = pow(0.65 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
-                    gl_FragColor = vec4(0.0, 0.6, 1.0, 1.0) * intensity * 0.7;
+                    gl_FragColor = vec4(0.17, 0.56, 0.75, 1.0) * intensity * 0.5;
                 }`,
             blending: THREE.AdditiveBlending,
             side: THREE.BackSide,
@@ -255,9 +255,9 @@
     ];
 
     const cityDotGeo = new THREE.SphereGeometry(0.08, 8, 8);
-    const cityDotMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff });
+    const cityDotMat = new THREE.MeshBasicMaterial({ color: 0x2b8fbe });
     const cityGlowGeo = new THREE.SphereGeometry(0.24, 8, 8);
-    const cityGlowMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.3 });
+    const cityGlowMat = new THREE.MeshBasicMaterial({ color: 0x2b8fbe, transparent: true, opacity: 0.2 });
 
     cities.forEach(city => {
         const pos = latLngToVec3(city.lat, city.lng, GLOBE_RADIUS + 0.02);
@@ -274,18 +274,18 @@
 
     /* ---- Trade Route Arcs ---- */
     const routes = [
-        { from: 'Shanghai', to: 'Rotterdam', color: 0x00d4ff },
-        { from: 'Shanghai', to: 'Los Angeles', color: 0x00f5d4 },
-        { from: 'Singapore', to: 'Dubai', color: 0x4d8bff },
-        { from: 'Mumbai', to: 'Rotterdam', color: 0xa855f7 },
-        { from: 'Dubai', to: 'New York', color: 0xffd700 },
-        { from: 'Santos', to: 'Hamburg', color: 0xff8c42 },
-        { from: 'Tokyo', to: 'Los Angeles', color: 0x00f5d4 },
-        { from: 'Hong Kong', to: 'Rotterdam', color: 0x00d4ff },
-        { from: 'Singapore', to: 'Cape Town', color: 0x4d8bff },
-        { from: 'Sydney', to: 'Singapore', color: 0xa855f7 },
-        { from: 'London', to: 'New York', color: 0xffd700 },
-        { from: 'Lagos', to: 'Santos', color: 0xff8c42 },
+        { from: 'Shanghai', to: 'Rotterdam', color: 0x2b8fbe },
+        { from: 'Shanghai', to: 'Los Angeles', color: 0x3aa89a },
+        { from: 'Singapore', to: 'Dubai', color: 0x3d6fb5 },
+        { from: 'Mumbai', to: 'Rotterdam', color: 0x6b7c99 },
+        { from: 'Dubai', to: 'New York', color: 0xc9a84c },
+        { from: 'Santos', to: 'Hamburg', color: 0xc17a3e },
+        { from: 'Tokyo', to: 'Los Angeles', color: 0x3aa89a },
+        { from: 'Hong Kong', to: 'Rotterdam', color: 0x2b8fbe },
+        { from: 'Singapore', to: 'Cape Town', color: 0x3d6fb5 },
+        { from: 'Sydney', to: 'Singapore', color: 0x6b7c99 },
+        { from: 'London', to: 'New York', color: 0xc9a84c },
+        { from: 'Lagos', to: 'Santos', color: 0xc17a3e },
     ];
 
     function getCityByName(n) { return cities.find(c => c.name === n); }
