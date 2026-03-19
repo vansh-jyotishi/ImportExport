@@ -570,7 +570,7 @@ section:not(#hero) {
 
 .trusted-logo {
     color: var(--text-muted);
-    font-size: 1.5rem;
+    font-size: 2.2rem;
     opacity: 0.5;
     transition: opacity 0.3s ease, color 0.3s ease;
 }
@@ -581,7 +581,7 @@ section:not(#hero) {
 }
 
 .trusted-more {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-muted);
     white-space: nowrap;
@@ -2047,7 +2047,7 @@ footer {
     .commodity-trend { min-width: 42px; font-size: 0.65rem; }
 
     .trusted-logos { gap: 1.5rem; }
-    .trusted-logo { font-size: 1.3rem; }
+    .trusted-logo { font-size: 1.8rem; }
 
     /* ---- Footer ---- */
     .footer-grid {
@@ -2117,9 +2117,9 @@ footer {
 
     .chart-body { height: 200px; }
 
-    .trusted-logos { gap: 1.2rem; }
-    .trusted-logo { font-size: 1.1rem; }
-    .trusted-more { font-size: 0.7rem; }
+    .trusted-logos { gap: 1rem; }
+    .trusted-logo { font-size: 1.5rem; }
+    .trusted-more { font-size: 0.75rem; }
     .chart-body-doughnut { height: 220px; }
 
     .modal {
