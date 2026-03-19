@@ -63,212 +63,143 @@
     scene.add(keyLight);
 
     /* ================================================
-       LAND DATA
+       COASTLINE POLYGONS — real continent outlines
+       drawn as smooth bezier curves on canvas.
+       Each array = [lng, lat] pairs tracing coastline.
+       Overlapping regions merge when filled.
        ================================================ */
-    function isWater(lat, lng) {
-        if (lat > 51 && lat < 63 && lng > -95 && lng < -78) return true;
-        if (lat > 41 && lat < 49 && lng > -92 && lng < -76) return true;
-        if (lat > 46 && lat < 52 && lng > -68 && lng < -56) return true;
-        if (lat > 10 && lat < 22 && lng > -86 && lng < -60) return true;
-        if (lat > 18 && lat < 30 && lng > -98 && lng < -82) return true;
-        if (lat > 35 && lat < 42 && lng > -1 && lng < 12) return true;
-        if (lat > 31 && lat < 41 && lng > 12 && lng < 36) return true;
-        if (lat > 41 && lat < 47 && lng > 27 && lng < 42) return true;
-        if (lat > 37 && lat < 47 && lng > 47 && lng < 54) return true;
-        if (lat > 54 && lat < 66 && lng > 12 && lng < 30) return true;
-        if (lat > 12 && lat < 28 && lng > 32 && lng < 44) return true;
-        if (lat > 24 && lat < 30 && lng > 48 && lng < 56) return true;
-        if (lat > 6 && lat < 22 && lng > 80 && lng < 94) return true;
-        if (lat > 3 && lat < 22 && lng > 106 && lng < 120) return true;
-        if (lat > 34 && lat < 52 && lng > 128 && lng < 140) return true;
-        if (lat > 43 && lat < 47 && lng > 58 && lng < 62) return true;
-        return false;
-    }
+    const P = [
+        /* Africa */
+        [[-17,15],[-17,21],[-13,28],[-6,36],[-2,35],[3,37],[10,37],[11,33],[15,32],[20,32],[25,32],[30,31],[33,30],[35,27],[37,22],[40,16],[43,12],[46,8],[50,12],[49,5],[44,-1],[40,-6],[36,-11],[35,-17],[36,-24],[33,-28],[28,-33],[18,-35],[15,-29],[12,-17],[12,-6],[9,1],[9,5],[4,6],[-1,6],[-5,5],[-10,6],[-16,12],[-17,15]],
+        /* South America */
+        [[-82,9],[-77,12],[-72,12],[-67,11],[-60,8],[-52,4],[-44,-2],[-35,-5],[-35,-10],[-37,-14],[-40,-22],[-48,-27],[-53,-33],[-58,-38],[-65,-46],[-68,-50],[-72,-53],[-76,-47],[-74,-40],[-72,-35],[-71,-28],[-75,-15],[-78,-5],[-80,0],[-78,5],[-77,8],[-82,9]],
+        /* North America */
+        [[-168,66],[-162,64],[-152,60],[-140,60],[-135,54],[-128,50],[-124,48],[-124,42],[-120,37],[-117,33],[-112,28],[-107,24],[-105,20],[-97,16],[-92,15],[-88,16],[-84,10],[-80,8],[-77,9],[-75,11],[-77,19],[-82,23],[-81,26],[-81,30],[-84,30],[-88,30],[-90,29],[-95,29],[-97,27],[-97,26],[-83,25],[-80,27],[-75,35],[-70,42],[-67,45],[-60,47],[-55,48],[-58,51],[-66,48],[-75,45],[-82,43],[-88,42],[-92,46],[-84,47],[-78,50],[-80,52],[-86,58],[-92,62],[-100,60],[-110,63],[-120,67],[-140,70],[-160,71],[-168,66]],
+        /* Greenland */
+        [[-55,60],[-45,60],[-22,65],[-18,70],[-20,76],[-22,82],[-35,83],[-46,82],[-55,80],[-58,76],[-52,68],[-55,60]],
+        /* W Europe: Iberia+France+Italy+Balkans */
+        [[-10,36],[-9,38],[-9,43],[-4,44],[-2,47],[-5,48],[-1,49],[2,51],[4,52],[7,54],[9,54],[13,46],[14,42],[16,39],[16,38],[13,38],[8,39],[5,44],[3,43],[-4,44],[-10,44],[-10,36]],
+        /* Scandinavia+Finland */
+        [[5,58],[10,58],[12,60],[15,63],[18,68],[25,71],[30,70],[30,65],[25,62],[20,60],[18,60],[12,56],[8,56],[5,58]],
+        /* Russia + N Asia */
+        [[28,45],[30,50],[35,55],[30,60],[33,68],[40,68],[50,70],[60,72],[70,73],[80,74],[90,74],[100,73],[110,74],[120,73],[130,71],[140,66],[143,59],[150,60],[162,62],[164,59],[155,50],[142,47],[135,45],[131,43],[128,42],[130,44],[135,49],[140,52],[140,56],[130,52],[120,53],[110,55],[100,55],[90,55],[80,55],[70,55],[60,55],[50,52],[40,48],[35,46],[28,45]],
+        /* Turkey+Iran+Central Asia */
+        [[26,37],[28,41],[30,42],[36,42],[40,41],[44,40],[48,38],[52,37],[56,36],[60,37],[64,37],[70,38],[75,40],[80,42],[80,37],[70,33],[64,30],[60,26],[57,26],[52,27],[48,30],[44,33],[36,37],[30,37],[26,37]],
+        /* Arabia */
+        [[36,28],[40,22],[43,16],[45,13],[50,16],[55,22],[56,26],[52,24],[48,27],[44,30],[36,28]],
+        /* India+Pakistan */
+        [[62,25],[68,24],[72,21],[73,17],[74,13],[77,9],[78,8],[80,12],[83,15],[87,20],[89,22],[85,27],[80,30],[72,33],[68,27],[62,25]],
+        /* SE Asia mainland */
+        [[92,22],[98,16],[100,14],[101,10],[103,2],[104,6],[106,10],[107,16],[109,20],[106,22],[100,20],[96,21],[92,22]],
+        /* China+Mongolia */
+        [[75,40],[80,45],[90,48],[100,50],[110,45],[115,40],[122,37],[122,30],[120,25],[117,23],[112,22],[110,25],[105,30],[100,35],[90,42],[80,42],[75,40]],
+        /* Australia */
+        [[114,-22],[117,-15],[123,-14],[129,-14],[132,-12],[137,-16],[141,-13],[144,-15],[149,-18],[153,-25],[154,-28],[153,-33],[147,-38],[144,-38],[138,-35],[131,-32],[123,-34],[115,-34],[114,-30],[114,-22]],
+        /* UK */
+        [[-6,50],[-5,52],[0,51],[2,53],[0,56],[-2,57],[-5,58],[-5,55],[-3,54],[-5,51],[-6,50]],
+        /* Ireland */
+        [[-10,52],[-10,54],[-8,55],[-6,54],[-6,52],[-8,51],[-10,52]],
+        /* Iceland */
+        [[-24,64],[-22,66],[-18,66],[-14,65],[-14,64],[-22,64],[-24,64]],
+        /* Japan */
+        [[130,31],[132,34],[135,35],[137,37],[140,38],[141,41],[140,43],[145,44],[145,45],[142,44],[139,42],[137,36],[134,34],[130,31]],
+        /* Madagascar */
+        [[44,-13],[50,-16],[50,-23],[47,-25],[44,-25],[43,-17],[44,-13]],
+        /* NZ North */
+        [[173,-37],[178,-38],[177,-41],[175,-41],[173,-39],[173,-37]],
+        /* NZ South */
+        [[167,-44],[172,-42],[174,-43],[172,-46],[168,-46],[167,-44]],
+        /* Borneo */
+        [[109,1],[112,5],[117,5],[118,1],[115,-3],[110,-1],[109,1]],
+        /* Sumatra */
+        [[96,5],[104,1],[106,-5],[100,-3],[96,5]],
+        /* Java */
+        [[105,-6],[108,-7],[114,-8],[112,-8],[106,-7],[105,-6]],
+        /* Philippines */
+        [[118,7],[121,10],[122,18],[120,16],[118,8],[118,7]],
+        /* Papua */
+        [[131,-2],[141,-3],[150,-6],[148,-4],[141,-2],[131,-2]],
+        /* Cuba */
+        [[-85,22],[-78,23],[-75,20],[-82,20],[-85,22]],
+        /* Sri Lanka */
+        [[80,10],[82,7],[80,6],[80,10]],
+        /* Taiwan */
+        [[120,22],[122,25],[121,25],[120,22]],
+        /* Korea */
+        [[126,34],[126,38],[128,38],[130,36],[129,33],[126,34]],
+        /* Sulawesi */
+        [[119,-1],[121,1],[123,1],[124,-2],[122,-4],[120,-3],[119,-1]],
+    ];
 
-    function isLand(lat, lng) {
-        if (lat > 55 && lat < 72 && lng > -170 && lng < -140) return !isWater(lat, lng);
-        if (lat > 60 && lat < 84 && lng > -140 && lng < -60) return !isWater(lat, lng);
-        if (lat > 48 && lat < 60 && lng > -140 && lng < -52) return !isWater(lat, lng);
-        if (lat > 42 && lat < 49 && lng > -125 && lng < -67) return !isWater(lat, lng);
-        if (lat > 30 && lat < 42 && lng > -124 && lng < -75) return !isWater(lat, lng);
-        if (lat > 25 && lat < 35 && lng > -106 && lng < -75) return !isWater(lat, lng);
-        if (lat > 24 && lat < 31 && lng > -88 && lng < -80) return true;
-        if (lat > 22 && lat < 33 && lng > -118 && lng < -109) return true;
-        if (lat > 14 && lat < 30 && lng > -108 && lng < -86) return !isWater(lat, lng);
-        if (lat > 7 && lat < 18 && lng > -92 && lng < -77) return true;
-        if (lat > 19.5 && lat < 23.5 && lng > -85 && lng < -74) return true;
-        if (lat > 18 && lat < 20.5 && lng > -75 && lng < -68) return true;
-        if (lat > 59 && lat < 84 && lng > -58 && lng < -12) return true;
-        if (lat > 63 && lat < 67 && lng > -25 && lng < -13) return true;
-        if (lat > 0 && lat < 12 && lng > -80 && lng < -59) return true;
-        if (lat > 1 && lat < 9 && lng > -62 && lng < -50) return true;
-        if (lat > -5 && lat < 2 && lng > -74 && lng < -35) return true;
-        if (lat > -15 && lat < -2 && lng > -55 && lng < -34) return true;
-        if (lat > -15 && lat < -2 && lng > -74 && lng < -55) return true;
-        if (lat > -18 && lat < 0 && lng > -82 && lng < -58) return true;
-        if (lat > -25 && lat < -15 && lng > -58 && lng < -38) return true;
-        if (lat > -35 && lat < -20 && lng > -63 && lng < -48) return true;
-        if (lat > -30 && lat < -18 && lng > -72 && lng < -58) return true;
-        if (lat > -42 && lat < -30 && lng > -73 && lng < -58) return true;
-        if (lat > -52 && lat < -42 && lng > -76 && lng < -63) return true;
-        if (lat > -56 && lat < -52 && lng > -72 && lng < -65) return true;
-        if (lat > 36 && lat < 44 && lng > -10 && lng < 4) return !isWater(lat, lng);
-        if (lat > 42 && lat < 51 && lng > -5 && lng < 8) return !isWater(lat, lng);
-        if (lat > 50 && lat < 59 && lng > -8 && lng < 2) return true;
-        if (lat > 51 && lat < 55.5 && lng > -11 && lng < -6) return true;
-        if (lat > 47 && lat < 55 && lng > 3 && lng < 15) return !isWater(lat, lng);
-        if (lat > 49 && lat < 55 && lng > 14 && lng < 24) return !isWater(lat, lng);
-        if (lat > 36 && lat < 47 && lng > 6 && lng < 19) return !isWater(lat, lng);
-        if (lat > 38 && lat < 46 && lng > 13 && lng < 30) return !isWater(lat, lng);
-        if (lat > 35 && lat < 42 && lng > 19 && lng < 30) return !isWater(lat, lng);
-        if (lat > 43 && lat < 52 && lng > 22 && lng < 40) return !isWater(lat, lng);
-        if (lat > 55 && lat < 72 && lng > 4 && lng < 32) return !isWater(lat, lng);
-        if (lat > 59 && lat < 70 && lng > 20 && lng < 32) return !isWater(lat, lng);
-        if (lat > 50 && lat < 72 && lng > 30 && lng < 60) return !isWater(lat, lng);
-        if (lat > 50 && lat < 75 && lng > 60 && lng < 120) return true;
-        if (lat > 45 && lat < 72 && lng > 120 && lng < 180) return true;
-        if (lat > 50 && lat < 62 && lng > 155 && lng < 165) return true;
-        if (lat > 27 && lat < 37 && lng > -13 && lng < 12) return true;
-        if (lat > 25 && lat < 38 && lng > 7 && lng < 25) return !isWater(lat, lng);
-        if (lat > 22 && lat < 32 && lng > 24 && lng < 37) return !isWater(lat, lng);
-        if (lat > 14 && lat < 27 && lng > -17 && lng < 15) return true;
-        if (lat > 8 && lat < 24 && lng > 15 && lng < 38) return !isWater(lat, lng);
-        if (lat > 4 && lat < 14 && lng > -17 && lng < 16) return true;
-        if (lat > -6 && lat < 8 && lng > 8 && lng < 32) return true;
-        if (lat > 0 && lat < 15 && lng > 32 && lng < 51) return !isWater(lat, lng);
-        if (lat > -12 && lat < 5 && lng > 28 && lng < 42) return true;
-        if (lat > -35 && lat < -12 && lng > 12 && lng < 41) return true;
-        if (lat > -26 && lat < -12 && lng > 43 && lng < 50) return true;
-        if (lat > 36 && lat < 42 && lng > 26 && lng < 45) return !isWater(lat, lng);
-        if (lat > 30 && lat < 38 && lng > 35 && lng < 48) return true;
-        if (lat > 16 && lat < 32 && lng > 36 && lng < 56) return !isWater(lat, lng);
-        if (lat > 12 && lat < 24 && lng > 42 && lng < 60) return !isWater(lat, lng);
-        if (lat > 25 && lat < 40 && lng > 44 && lng < 64) return !isWater(lat, lng);
-        if (lat > 24 && lat < 38 && lng > 60 && lng < 75) return true;
-        if (lat > 20 && lat < 35 && lng > 68 && lng < 90) return !isWater(lat, lng);
-        if (lat > 8 && lat < 20 && lng > 72 && lng < 88) return !isWater(lat, lng);
-        if (lat > 5.5 && lat < 10 && lng > 79 && lng < 82) return true;
-        if (lat > 26 && lat < 29 && lng > 80 && lng < 92) return true;
-        if (lat > 20 && lat < 27 && lng > 88 && lng < 93) return true;
-        if (lat > 10 && lat < 28 && lng > 92 && lng < 101) return true;
-        if (lat > 35 && lat < 50 && lng > 50 && lng < 80) return !isWater(lat, lng);
-        if (lat > 42 && lat < 52 && lng > 88 && lng < 120) return true;
-        if (lat > 22 && lat < 42 && lng > 100 && lng < 123) return true;
-        if (lat > 28 && lat < 45 && lng > 75 && lng < 100) return true;
-        if (lat > 27 && lat < 37 && lng > 78 && lng < 100) return true;
-        if (lat > 40 && lat < 54 && lng > 119 && lng < 135) return true;
-        if (lat > 34 && lat < 43 && lng > 124 && lng < 130) return true;
-        if (lat > 33 && lat < 42 && lng > 130 && lng < 142) return true;
-        if (lat > 41 && lat < 46 && lng > 139 && lng < 146) return true;
-        if (lat > 31 && lat < 34 && lng > 129 && lng < 132) return true;
-        if (lat > 22 && lat < 26 && lng > 120 && lng < 122) return true;
-        if (lat > 5 && lat < 21 && lng > 97 && lng < 106) return true;
-        if (lat > 8 && lat < 23 && lng > 102 && lng < 110) return true;
-        if (lat > 10 && lat < 23 && lng > 100 && lng < 108) return true;
-        if (lat > 1 && lat < 8 && lng > 99 && lng < 105) return true;
-        if (lat > -6 && lat < 6 && lng > 95 && lng < 106) return true;
-        if (lat > -4 && lat < 7 && lng > 108 && lng < 119) return true;
-        if (lat > -9 && lat < -5 && lng > 105 && lng < 115) return true;
-        if (lat > -6 && lat < 2 && lng > 119 && lng < 126) return true;
-        if (lat > 5 && lat < 19 && lng > 117 && lng < 127) return true;
-        if (lat > -9 && lat < 0 && lng > 130 && lng < 150) return true;
-        if (lat > -35 && lat < -14 && lng > 114 && lng < 130) return true;
-        if (lat > -38 && lat < -12 && lng > 130 && lng < 154) return true;
-        if (lat > -44 && lat < -40 && lng > 144 && lng < 149) return true;
-        if (lat > -42 && lat < -34 && lng > 172 && lng < 178) return true;
-        if (lat > -47 && lat < -42 && lng > 166 && lng < 174) return true;
-        return false;
+    /* Draw a smooth polygon using quadratic curves through midpoints */
+    function drawSmooth(ctx, pts, W, H) {
+        if (pts.length < 3) return;
+        const c = pts.map(([lng, lat]) => [((lng + 180) / 360) * W, ((90 - lat) / 180) * H]);
+        ctx.beginPath();
+        let mx = (c[0][0] + c[1][0]) / 2, my = (c[0][1] + c[1][1]) / 2;
+        ctx.moveTo(mx, my);
+        for (let i = 1; i < c.length; i++) {
+            const nx = (c[i][0] + c[(i + 1) % c.length][0]) / 2;
+            const ny = (c[i][1] + c[(i + 1) % c.length][1]) / 2;
+            ctx.quadraticCurveTo(c[i][0], c[i][1], nx, ny);
+        }
+        ctx.closePath();
+        ctx.fill();
     }
 
     /* ================================================
        GLOBE TEXTURE — Azure-style: dark ocean, subtle
-       light land, ultra-smooth edges, no grid lines.
-       Tiny canvas (360x180) → heavy blur → upscale.
+       land, crisp smooth bezier coastlines, no blur.
        ================================================ */
     function createGlobeTexture() {
         const W = TEX_SIZE, H = TEX_SIZE / 2;
-
-        /* --- Render land mask on tiny 360x180 canvas (1° per pixel) --- */
-        const sW = 360, sH = 180;
-        const mask = document.createElement('canvas');
-        mask.width = sW; mask.height = sH;
-        const mCtx = mask.getContext('2d');
-
-        const imgData = mCtx.createImageData(sW, sH);
-        const d = imgData.data;
-        for (let py = 0; py < sH; py++) {
-            const lat = 90 - py;
-            for (let px = 0; px < sW; px++) {
-                const lng = px - 180;
-                if (isLand(lat, lng)) {
-                    const idx = (py * sW + px) * 4;
-                    d[idx] = d[idx + 1] = d[idx + 2] = 255;
-                    d[idx + 3] = 255;
-                }
-            }
-        }
-        mCtx.putImageData(imgData, 0, 0);
-
-        /* --- Blur the tiny mask heavily (6px on 360px = ~6° smoothing) --- */
-        const blurMask = document.createElement('canvas');
-        blurMask.width = sW; blurMask.height = sH;
-        const bmCtx = blurMask.getContext('2d');
-        bmCtx.filter = 'blur(5px)';
-        bmCtx.drawImage(mask, 0, 0);
-
-        /* Read the blurred mask as alpha values */
-        const blurData = bmCtx.getImageData(0, 0, sW, sH).data;
-
-        /* --- Build the final high-res texture --- */
         const canvas = document.createElement('canvas');
         canvas.width = W; canvas.height = H;
         const ctx = canvas.getContext('2d');
 
-        /* Ocean base — very dark, near black */
+        /* Ocean — near black */
         ctx.fillStyle = '#070b14';
         ctx.fillRect(0, 0, W, H);
 
-        /* Upscale blurred mask to full resolution, then use it to paint land */
-        const landCanvas = document.createElement('canvas');
-        landCanvas.width = sW; landCanvas.height = sH;
-        const lCtx = landCanvas.getContext('2d');
+        /* Coastline glow — draw slightly expanded polygons first */
+        ctx.fillStyle = 'rgba(0, 140, 200, 0.12)';
+        ctx.save();
+        /* Scale from center to slightly expand polygons for glow */
+        P.forEach(poly => {
+            /* Draw glow pass: offset each point slightly outward */
+            const expanded = poly.map(([lng, lat]) => {
+                /* Push each vertex ~0.8 degrees outward from polygon centroid */
+                let cLng = 0, cLat = 0;
+                poly.forEach(([lo, la]) => { cLng += lo; cLat += la; });
+                cLng /= poly.length; cLat /= poly.length;
+                const dx = lng - cLng, dy = lat - cLat;
+                const len = Math.sqrt(dx * dx + dy * dy) || 1;
+                return [lng + (dx / len) * 0.8, lat + (dy / len) * 0.8];
+            });
+            drawSmooth(ctx, expanded, W, H);
+        });
+        ctx.restore();
 
-        const landImg = lCtx.createImageData(sW, sH);
-        const ld = landImg.data;
+        /* Land fill — dark blue-gray, subtle */
+        ctx.fillStyle = '#141e2c';
+        P.forEach(poly => drawSmooth(ctx, poly, W, H));
 
-        /* Land: subtle blue-gray, barely above ocean */
-        /* Coastline: slightly brighter edge where mask is partial */
-        for (let i = 0; i < sW * sH; i++) {
-            const alpha = blurData[i * 4]; /* white channel from blurred mask */
-            const norm = alpha / 255;
-
-            if (norm > 0.01) {
-                const idx = i * 4;
-                /* Interior land: dark muted blue-gray */
-                const baseR = 18, baseG = 28, baseB = 42;
-                /* Coastline boost: brighter at edges (where norm is 0.1-0.7) */
-                const edgeFactor = norm > 0.1 && norm < 0.7 ? (1 - Math.abs(norm - 0.4) * 2.5) * 0.6 : 0;
-                const glowR = 10, glowG = 55, glowB = 80;
-
-                ld[idx]     = Math.round(baseR * norm + glowR * edgeFactor);
-                ld[idx + 1] = Math.round(baseG * norm + glowG * edgeFactor);
-                ld[idx + 2] = Math.round(baseB * norm + glowB * edgeFactor);
-                ld[idx + 3] = 255;
+        /* Coastline edge — thin bright rim */
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = 'rgba(0, 180, 240, 0.22)';
+        P.forEach(poly => {
+            const c = poly.map(([lng, lat]) => [((lng + 180) / 360) * W, ((90 - lat) / 180) * H]);
+            ctx.beginPath();
+            let mx = (c[0][0] + c[1][0]) / 2, my = (c[0][1] + c[1][1]) / 2;
+            ctx.moveTo(mx, my);
+            for (let i = 1; i < c.length; i++) {
+                const nx = (c[i][0] + c[(i + 1) % c.length][0]) / 2;
+                const ny = (c[i][1] + c[(i + 1) % c.length][1]) / 2;
+                ctx.quadraticCurveTo(c[i][0], c[i][1], nx, ny);
             }
-        }
-        lCtx.putImageData(landImg, 0, 0);
-
-        /* Second blur pass for extra smoothness */
-        const land2 = document.createElement('canvas');
-        land2.width = sW; land2.height = sH;
-        const l2Ctx = land2.getContext('2d');
-        l2Ctx.filter = 'blur(1.5px)';
-        l2Ctx.drawImage(landCanvas, 0, 0);
-
-        /* Upscale onto final canvas with high-quality interpolation */
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(land2, 0, 0, W, H);
+            ctx.closePath();
+            ctx.stroke();
+        });
 
         const texture = new THREE.CanvasTexture(canvas);
         texture.needsUpdate = true;
