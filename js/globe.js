@@ -56,14 +56,11 @@
     if (fb) fb.remove();
     container.appendChild(renderer.domElement);
 
-    /* ---- Lighting (key + fill + rim for depth) ---- */
-    scene.add(new THREE.AmbientLight(0x556688, 1.0));
-    const keyLight = new THREE.DirectionalLight(0xddeeff, 1.2);
+    /* ---- Lighting — soft, directional, Azure-style ---- */
+    scene.add(new THREE.AmbientLight(0x223344, 1.5));
+    const keyLight = new THREE.DirectionalLight(0x8899bb, 1.0);
     keyLight.position.set(5, 3, 4);
     scene.add(keyLight);
-    const fillLight = new THREE.DirectionalLight(0x445566, 0.4);
-    fillLight.position.set(-4, -1, -3);
-    scene.add(fillLight);
 
     /* ================================================
        LAND DATA
@@ -184,101 +181,94 @@
     }
 
     /* ================================================
-       GLOBE TEXTURE — smooth land via low-res + blur + upscale
-       Renders land at small resolution, blurs heavily, then
-       upscales with bilinear interpolation for smooth coastlines.
+       GLOBE TEXTURE — Azure-style: dark ocean, subtle
+       light land, ultra-smooth edges, no grid lines.
+       Tiny canvas (360x180) → heavy blur → upscale.
        ================================================ */
     function createGlobeTexture() {
         const W = TEX_SIZE, H = TEX_SIZE / 2;
 
-        /* --- Step 1: Paint land on small work canvas --- */
-        const sW = 720, sH = 360;
-        const work = document.createElement('canvas');
-        work.width = sW; work.height = sH;
-        const wCtx = work.getContext('2d');
+        /* --- Render land mask on tiny 360x180 canvas (1° per pixel) --- */
+        const sW = 360, sH = 180;
+        const mask = document.createElement('canvas');
+        mask.width = sW; mask.height = sH;
+        const mCtx = mask.getContext('2d');
 
-        /* Black background (transparent ocean) */
-        wCtx.clearRect(0, 0, sW, sH);
-
-        const imgData = wCtx.createImageData(sW, sH);
+        const imgData = mCtx.createImageData(sW, sH);
         const d = imgData.data;
         for (let py = 0; py < sH; py++) {
-            const lat = 90 - (py / sH) * 180;
+            const lat = 90 - py;
             for (let px = 0; px < sW; px++) {
-                const lng = (px / sW) * 360 - 180;
+                const lng = px - 180;
                 if (isLand(lat, lng)) {
                     const idx = (py * sW + px) * 4;
-                    d[idx]     = 38 + ((px * 7 + py * 13) % 15);
-                    d[idx + 1] = 110 + ((px * 11 + py * 3) % 25);
-                    d[idx + 2] = 85 + ((px * 5 + py * 9) % 18);
+                    d[idx] = d[idx + 1] = d[idx + 2] = 255;
                     d[idx + 3] = 255;
                 }
             }
         }
-        wCtx.putImageData(imgData, 0, 0);
+        mCtx.putImageData(imgData, 0, 0);
 
-        /* --- Step 2: Heavy blur on small canvas (smooths all edges) --- */
-        const blurred = document.createElement('canvas');
-        blurred.width = sW; blurred.height = sH;
-        const bCtx = blurred.getContext('2d');
-        bCtx.filter = 'blur(4px)';
-        bCtx.drawImage(work, 0, 0);
+        /* --- Blur the tiny mask heavily (6px on 360px = ~6° smoothing) --- */
+        const blurMask = document.createElement('canvas');
+        blurMask.width = sW; blurMask.height = sH;
+        const bmCtx = blurMask.getContext('2d');
+        bmCtx.filter = 'blur(5px)';
+        bmCtx.drawImage(mask, 0, 0);
 
-        /* --- Step 3: Coastline glow on small canvas --- */
-        const edge = document.createElement('canvas');
-        edge.width = sW; edge.height = sH;
-        const eCtx = edge.getContext('2d');
-        eCtx.fillStyle = 'rgba(0, 210, 255, 0.5)';
-        for (let py = 1; py < sH - 1; py++) {
-            const lat = 90 - (py / sH) * 180;
-            for (let px = 1; px < sW - 1; px++) {
-                const lng = (px / sW) * 360 - 180;
-                if (isLand(lat, lng)) {
-                    const latStep = 180 / sH, lngStep = 360 / sW;
-                    if (!isLand(lat + latStep, lng) || !isLand(lat - latStep, lng) ||
-                        !isLand(lat, lng + lngStep) || !isLand(lat, lng - lngStep)) {
-                        eCtx.fillRect(px, py, 1, 1);
-                    }
-                }
-            }
-        }
-        const edgeBlur = document.createElement('canvas');
-        edgeBlur.width = sW; edgeBlur.height = sH;
-        const ebCtx = edgeBlur.getContext('2d');
-        ebCtx.filter = 'blur(3px)';
-        ebCtx.drawImage(edge, 0, 0);
+        /* Read the blurred mask as alpha values */
+        const blurData = bmCtx.getImageData(0, 0, sW, sH).data;
 
-        /* --- Step 4: Composite onto final high-res canvas --- */
+        /* --- Build the final high-res texture --- */
         const canvas = document.createElement('canvas');
         canvas.width = W; canvas.height = H;
         const ctx = canvas.getContext('2d');
 
-        /* Ocean */
-        const oceanGrad = ctx.createRadialGradient(W * 0.4, H * 0.4, 0, W / 2, H / 2, W * 0.7);
-        oceanGrad.addColorStop(0, '#0c1e30');
-        oceanGrad.addColorStop(1, '#060e1c');
-        ctx.fillStyle = oceanGrad;
+        /* Ocean base — very dark, near black */
+        ctx.fillStyle = '#070b14';
         ctx.fillRect(0, 0, W, H);
 
-        /* Upscale blurred land — browser bilinear interpolation adds extra smoothing */
+        /* Upscale blurred mask to full resolution, then use it to paint land */
+        const landCanvas = document.createElement('canvas');
+        landCanvas.width = sW; landCanvas.height = sH;
+        const lCtx = landCanvas.getContext('2d');
+
+        const landImg = lCtx.createImageData(sW, sH);
+        const ld = landImg.data;
+
+        /* Land: subtle blue-gray, barely above ocean */
+        /* Coastline: slightly brighter edge where mask is partial */
+        for (let i = 0; i < sW * sH; i++) {
+            const alpha = blurData[i * 4]; /* white channel from blurred mask */
+            const norm = alpha / 255;
+
+            if (norm > 0.01) {
+                const idx = i * 4;
+                /* Interior land: dark muted blue-gray */
+                const baseR = 18, baseG = 28, baseB = 42;
+                /* Coastline boost: brighter at edges (where norm is 0.1-0.7) */
+                const edgeFactor = norm > 0.1 && norm < 0.7 ? (1 - Math.abs(norm - 0.4) * 2.5) * 0.6 : 0;
+                const glowR = 10, glowG = 55, glowB = 80;
+
+                ld[idx]     = Math.round(baseR * norm + glowR * edgeFactor);
+                ld[idx + 1] = Math.round(baseG * norm + glowG * edgeFactor);
+                ld[idx + 2] = Math.round(baseB * norm + glowB * edgeFactor);
+                ld[idx + 3] = 255;
+            }
+        }
+        lCtx.putImageData(landImg, 0, 0);
+
+        /* Second blur pass for extra smoothness */
+        const land2 = document.createElement('canvas');
+        land2.width = sW; land2.height = sH;
+        const l2Ctx = land2.getContext('2d');
+        l2Ctx.filter = 'blur(1.5px)';
+        l2Ctx.drawImage(landCanvas, 0, 0);
+
+        /* Upscale onto final canvas with high-quality interpolation */
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(blurred, 0, 0, W, H);
-
-        /* Upscale edge glow */
-        ctx.drawImage(edgeBlur, 0, 0, W, H);
-
-        /* Subtle grid lines */
-        ctx.strokeStyle = 'rgba(80, 160, 220, 0.018)';
-        ctx.lineWidth = 0.8;
-        for (let lat = -80; lat <= 80; lat += 30) {
-            const y = ((90 - lat) / 180) * H;
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-        }
-        for (let lng = -180; lng < 180; lng += 30) {
-            const x = ((lng + 180) / 360) * W;
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-        }
+        ctx.drawImage(land2, 0, 0, W, H);
 
         const texture = new THREE.CanvasTexture(canvas);
         texture.needsUpdate = true;
@@ -295,23 +285,23 @@
         );
     }
 
-    /* ---- Globe ---- */
+    /* ---- Globe — dark matte with subtle specular ---- */
     const globe = new THREE.Mesh(
         new THREE.SphereGeometry(GLOBE_RADIUS, SEGMENTS, SEGMENTS),
         new THREE.MeshPhongMaterial({
             map: createGlobeTexture(),
-            shininess: 25,
-            specular: new THREE.Color(0x112233),
+            shininess: 8,
+            specular: new THREE.Color(0x0a1520),
         })
     );
     scene.add(globe);
 
-    /* ---- Atmosphere ---- */
+    /* ---- Atmosphere — very subtle rim glow ---- */
     scene.add(new THREE.Mesh(
-        new THREE.SphereGeometry(GLOBE_RADIUS * 1.06, SEGMENTS, SEGMENTS),
+        new THREE.SphereGeometry(GLOBE_RADIUS * 1.04, SEGMENTS, SEGMENTS),
         new THREE.ShaderMaterial({
             vertexShader: `varying vec3 vN; void main(){ vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
-            fragmentShader: `varying vec3 vN; void main(){ float i = pow(0.6 - dot(vN, vec3(0,0,1)), 2.0); gl_FragColor = vec4(0.2, 0.6, 1.0, 1.0) * i * 0.5; }`,
+            fragmentShader: `varying vec3 vN; void main(){ float i = pow(0.55 - dot(vN, vec3(0,0,1)), 2.5); gl_FragColor = vec4(0.15, 0.45, 0.8, 1.0) * i * 0.35; }`,
             blending: THREE.AdditiveBlending,
             side: THREE.BackSide,
             transparent: true,
@@ -322,7 +312,7 @@
     const sp = new Float32Array(STAR_COUNT * 3);
     for (let i = 0; i < STAR_COUNT; i++) { sp[i*3]=(Math.random()-0.5)*200; sp[i*3+1]=(Math.random()-0.5)*200; sp[i*3+2]=(Math.random()-0.5)*200; }
     const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
-    const stars = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xffffff, size: 0.15, transparent: true, opacity: 0.6 }));
+    const stars = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xaabbcc, size: 0.12, transparent: true, opacity: 0.35 }));
     scene.add(stars);
 
     /* ---- City Markers ---- */
@@ -337,10 +327,10 @@
         { name:'London', lat:51.5, lng:-0.1 }, { name:'Jeddah', lat:21.5, lng:39.2 },
         { name:'Lagos', lat:6.5, lng:3.4 }, { name:'Vancouver', lat:49.3, lng:-123.1 },
     ];
-    const cdGeo = new THREE.SphereGeometry(0.07, 8, 8);
-    const cdMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff });
-    const cgGeo = new THREE.SphereGeometry(0.2, 8, 8);
-    const cgMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.25 });
+    const cdGeo = new THREE.SphereGeometry(0.06, 8, 8);
+    const cdMat = new THREE.MeshBasicMaterial({ color: 0x00aadd });
+    const cgGeo = new THREE.SphereGeometry(0.18, 8, 8);
+    const cgMat = new THREE.MeshBasicMaterial({ color: 0x0088bb, transparent: true, opacity: 0.18 });
     cities.forEach(c => {
         const p = latLngToVec3(c.lat, c.lng, GLOBE_RADIUS + 0.02);
         const d = new THREE.Mesh(cdGeo, cdMat); d.position.copy(p); globe.add(d);
@@ -365,7 +355,7 @@
         const curve = new THREE.QuadraticBezierCurve3(s, m, e);
         globe.add(new THREE.Line(
             new THREE.BufferGeometry().setFromPoints(curve.getPoints(ARC_SEGMENTS)),
-            new THREE.LineBasicMaterial({ color: r.color, transparent: true, opacity: 0.45 })
+            new THREE.LineBasicMaterial({ color: r.color, transparent: true, opacity: 0.3 })
         ));
         return { curve, color: r.color };
     }).filter(Boolean);
