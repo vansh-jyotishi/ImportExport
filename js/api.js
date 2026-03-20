@@ -129,8 +129,9 @@ const TradeFlowAPI = (function () {
         if (backendAvailable !== null) return backendAvailable;
         try {
             const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 3000);
-            const res = await fetch(`${BASE_URL}/platform-stats`, { signal: controller.signal });
+            // 30s timeout — Render free tier cold starts can take up to 50s
+            const timeout = setTimeout(() => controller.abort(), 30000);
+            const res = await fetch(`${BASE_URL}/categories`, { signal: controller.signal });
             clearTimeout(timeout);
             backendAvailable = res.ok;
         } catch {
