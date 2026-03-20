@@ -35,8 +35,13 @@
         const statusEl = document.getElementById('backendStatus');
         if (!statusEl) return false;
 
+        // Show "waking up" message while waiting
+        statusEl.classList.add('waking');
+        statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Waking up server...</span>';
+
         const available = await TradeFlowAPI.checkBackend();
 
+        statusEl.classList.remove('waking');
         if (available) {
             statusEl.classList.add('online');
             statusEl.innerHTML = '<i class="fas fa-circle"></i> <span>API Connected</span>';

@@ -2344,6 +2344,16 @@ footer {
     color: #00f5d4;
 }
 
+.backend-status.waking {
+    color: #00d4ff;
+    border-color: rgba(0,212,255,0.2);
+}
+
+.backend-status.waking i {
+    color: #00d4ff;
+    font-size: 0.75rem;
+}
+
 .backend-status.offline {
     color: #ffd700;
     border-color: rgba(255,215,0,0.2);
