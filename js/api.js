@@ -8,10 +8,13 @@ const TradeFlowAPI = (function () {
     'use strict';
 
     // ─── Configuration ────────────────────────────────────
-    // IMPORTANT: Change this to your backend URL.
-    // For local development: http://localhost:8080
-    // For production: https://your-deployed-backend.com
-    const BASE_URL = 'http://localhost:8080/api';
+    // Auto-detects: if running on localhost → use local backend
+    // Otherwise (GitHub Pages, etc.) → use Render deployed backend
+    const PROD_BACKEND = 'https://tradeflow-backend-gby9.onrender.com/api';
+    const LOCAL_BACKEND = 'http://localhost:8080/api';
+    const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? LOCAL_BACKEND
+        : PROD_BACKEND;
 
     // Track if backend is reachable
     let backendAvailable = null; // null = unknown, true/false after first check
