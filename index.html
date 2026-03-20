@@ -43,8 +43,8 @@
                 <button class="btn-nav" id="trackBtn">
                     <i class="fas fa-search"></i> Track Shipment
                 </button>
-                <button class="btn-nav btn-primary">
-                    <i class="fas fa-user"></i> Login
+                <button class="btn-nav btn-primary" id="authBtn">
+                    <i class="fas fa-user"></i> <span id="authBtnText">Login</span>
                 </button>
             </div>
             <button class="nav-toggle" id="navToggle">
@@ -933,11 +933,97 @@
         </div>
     </div>
 
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal auth-modal">
+            <button class="modal-close" id="authModalClose"><i class="fas fa-times"></i></button>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <h2><i class="fas fa-sign-in-alt"></i> Welcome Back</h2>
+                <p>Sign in to access your dashboard and track shipments.</p>
+                <div class="auth-fields">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="Email address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                    </div>
+                </div>
+                <button class="btn btn-glow btn-full" id="loginSubmit">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <div class="auth-error" id="loginError"></div>
+                <p class="auth-switch">
+                    Don't have an account? <a href="#" id="showSignup">Create one</a>
+                </p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form">
+                <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+                <p>Join TradeFlow to manage your global shipments.</p>
+                <div class="auth-fields">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="signupName" placeholder="Full name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="signupEmail" placeholder="Email address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="signupPassword" placeholder="Password (min 8 chars)" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-building"></i>
+                        <input type="text" id="signupCompany" placeholder="Company name (optional)">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="signupPhone" placeholder="Phone (optional)">
+                    </div>
+                </div>
+                <button class="btn btn-glow btn-full" id="signupSubmit">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                <div class="auth-error" id="signupError"></div>
+                <p class="auth-switch">
+                    Already have an account? <a href="#" id="showLogin">Sign in</a>
+                </p>
+            </div>
+
+            <!-- User Profile (shown when logged in) -->
+            <div id="userProfile" class="auth-form">
+                <h2><i class="fas fa-user-circle"></i> <span id="profileName">User</span></h2>
+                <p id="profileEmail">user@email.com</p>
+                <div class="profile-info">
+                    <div class="profile-stat">
+                        <i class="fas fa-box"></i>
+                        <span id="profileCompany">-</span>
+                    </div>
+                </div>
+                <button class="btn btn-outline btn-full" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backend Status Indicator -->
+    <div id="backendStatus" class="backend-status" title="Backend connection status">
+        <i class="fas fa-circle"></i> <span>Checking...</span>
+    </div>
+
     <!-- Scripts with CDN fallback handling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
             onerror="console.warn('Three.js CDN failed — globe will show fallback.')"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
             onerror="document.getElementById('analytics').querySelectorAll('.chart-body').forEach(function(el){el.innerHTML='<p style=&quot;text-align:center;color:#5a6a80;padding:2rem&quot;>Charts unavailable offline</p>'})"></script>
+    <script src="js/api.js"></script>
     <script src="js/globe.js"></script>
     <script src="js/app.js"></script>
 </body>

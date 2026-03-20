@@ -1,0 +1,415 @@
+/* ================================================
+   TradeFlow — Dashboard & Admin Panel Styles
+   ================================================ */
+
+/* ─── Layout ───────────────────────────────────────── */
+.dash-main {
+    max-width: 1200px;
+    margin: 100px auto 3rem;
+    padding: 0 1.5rem;
+}
+
+.dash-welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(77,139,255,0.08));
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.dash-welcome h1 {
+    font-size: 1.6rem;
+    color: #fff;
+    margin: 0 0 0.25rem;
+}
+
+.dash-welcome h1 span {
+    color: #00d4ff;
+}
+
+.dash-welcome p {
+    color: #5a6a80;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.wallet-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0,245,212,0.1);
+    border: 1px solid rgba(0,245,212,0.25);
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    color: #00f5d4;
+    font-size: 1.3rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.wallet-badge i {
+    font-size: 1.1rem;
+}
+
+/* ─── Tabs ─────────────────────────────────────────── */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ─── Dashboard Section Blocks ─────────────────────── */
+.dash-section {
+    margin-top: 2rem;
+}
+
+.dash-section h2 {
+    font-size: 1.15rem;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.dash-section h2 i {
+    color: #00d4ff;
+    margin-right: 0.5rem;
+}
+
+/* ─── Tables ───────────────────────────────────────── */
+.table-wrap {
+    overflow-x: auto;
+}
+
+.dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.dash-table thead {
+    background: rgba(255,255,255,0.03);
+}
+
+.dash-table th {
+    text-align: left;
+    padding: 0.75rem 0.75rem;
+    color: #5a6a80;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    white-space: nowrap;
+}
+
+.dash-table td {
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #b0bec5;
+    vertical-align: middle;
+}
+
+.dash-table tbody tr:hover {
+    background: rgba(0,212,255,0.03);
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.btn-sm {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.2s;
+}
+
+.btn-sm.btn-glow {
+    background: linear-gradient(135deg, #00d4ff, #4d8bff);
+    color: #fff;
+}
+
+.btn-sm.btn-glow:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,212,255,0.3);
+}
+
+.btn-sm.btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #8a9ab5;
+}
+
+.btn-sm.btn-outline:hover {
+    border-color: #ff4444;
+    color: #ff4444;
+}
+
+.text-green { color: #00f5d4; }
+.text-red { color: #ff4444; }
+
+.empty-state {
+    text-align: center;
+    color: #5a6a80;
+    padding: 3rem 1rem;
+    font-size: 0.95rem;
+}
+
+.empty-state i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.4;
+}
+
+/* ─── Status Badges ────────────────────────────────── */
+.status-pending .status-dot { background: #ffd700; }
+.status-cancelled { opacity: 0.5; }
+
+/* ─── Status Select (admin) ────────────────────────── */
+.status-select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #b0bec5;
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: #00d4ff;
+}
+
+.status-select option {
+    background: #0a1628;
+    color: #b0bec5;
+}
+
+/* ─── Role Badge ───────────────────────────────────── */
+.role-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: rgba(0,212,255,0.12);
+    color: #00d4ff;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* ─── Admin Badge ──────────────────────────────────── */
+.admin-badge {
+    background: linear-gradient(135deg, #ff8c42, #ff4444);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ─── Wallet Section ───────────────────────────────── */
+.wallet-header {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.wallet-balance-card {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, rgba(0,245,212,0.1), rgba(0,212,255,0.05));
+    border: 1px solid rgba(0,245,212,0.2);
+    border-radius: 16px;
+    padding: 1.5rem 2.5rem;
+    text-align: center;
+}
+
+.wallet-label {
+    color: #5a6a80;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.wallet-amount {
+    color: #00f5d4;
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.wallet-currency {
+    color: #5a6a80;
+    font-size: 0.8rem;
+}
+
+.wallet-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.wallet-actions .input-group {
+    width: 180px;
+}
+
+.wallet-actions .input-group input {
+    padding: 0.7rem 1rem 0.7rem 0.5rem;
+}
+
+/* ─── Booking Form ─────────────────────────────────── */
+.booking-form {
+    max-width: 700px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-group label {
+    color: #8a9ab5;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    color: #fff;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: rgba(0,212,255,0.4);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+}
+
+.form-group select option {
+    background: #0a1628;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.price-estimate {
+    display: none;
+    background: rgba(0,245,212,0.06);
+    border: 1px solid rgba(0,245,212,0.15);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+}
+
+.estimate-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0;
+    color: #8a9ab5;
+}
+
+.estimate-price {
+    color: #00f5d4;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* ─── KPI override for dashboard pages ─────────────── */
+.dash-main .kpi-grid {
+    margin-bottom: 2rem;
+}
+
+.dash-main .kpi-card {
+    animation: none;
+    opacity: 1;
+    transform: none;
+}
+
+/* ─── Tab section headings ─────────────────────────── */
+.tab-content > h1 {
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+
+.tab-content > h1 i {
+    color: #00d4ff;
+    margin-right: 0.5rem;
+}
+
+/* ─── Responsive ───────────────────────────────────── */
+@media (max-width: 768px) {
+    .dash-welcome {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .wallet-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .wallet-balance-card {
+        padding: 1rem;
+    }
+
+    .wallet-amount {
+        font-size: 1.8rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .dash-table {
+        font-size: 0.78rem;
+    }
+}

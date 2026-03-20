@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeFlow — Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <nav id="navbar" class="scrolled">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-globe-americas"></i> <span>TradeFlow</span>
+                <span class="admin-badge">ADMIN</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-tab="dashboard">Dashboard</a></li>
+                <li><a href="#" data-tab="users">Users</a></li>
+                <li><a href="#" data-tab="bookings">Bookings</a></li>
+                <li><a href="#" data-tab="inquiries">Inquiries</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="index.html" class="btn-nav"><i class="fas fa-home"></i> Site</a>
+                <button class="btn-nav btn-primary" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+            <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <main class="dash-main">
+        <!-- ─── Dashboard Tab ─── -->
+        <section class="tab-content active" id="tab-dashboard">
+            <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+            <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-users"></i></div>
+                    <div class="kpi-data"><span class="kpi-value" id="statUsers">-</span><span class="kpi-label">Users</span></div></div>
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-cubes"></i></div>
+                    <div class="kpi-data"><span class="kpi-value" id="statProducts">-</span><span class="kpi-label">Products</span></div></div>
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-shipping-fast"></i></div>
+                    <div class="kpi-data"><span class="kpi-value" id="statShipments">-</span><span class="kpi-label">Shipments</span></div></div>
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="kpi-data"><span class="kpi-value" id="statInquiries">-</span><span class="kpi-label">Inquiries</span></div></div>
+            </div>
+        </section>
+
+        <!-- ─── Users Tab ─── -->
+        <section class="tab-content" id="tab-users">
+            <h1><i class="fas fa-users"></i> Registered Users</h1>
+            <div id="usersTable" class="table-wrap"><p class="empty-state">Loading...</p></div>
+        </section>
+
+        <!-- ─── Bookings Tab ─── -->
+        <section class="tab-content" id="tab-bookings">
+            <h1><i class="fas fa-shipping-fast"></i> All Bookings</h1>
+            <div id="adminBookings" class="table-wrap"><p class="empty-state">Loading...</p></div>
+        </section>
+
+        <!-- ─── Inquiries Tab ─── -->
+        <section class="tab-content" id="tab-inquiries">
+            <h1><i class="fas fa-envelope"></i> Inquiries / Leads</h1>
+            <div id="adminInquiries" class="table-wrap"><p class="empty-state">Loading...</p></div>
+        </section>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
